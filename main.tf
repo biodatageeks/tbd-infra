@@ -4,3 +4,8 @@ module "gke" {
   location = var.location
   machine_type = var.machine_type
 }
+
+
+module "spark" {
+  source   = "./modules/spark"
+}

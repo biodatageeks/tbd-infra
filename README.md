@@ -80,11 +80,12 @@ export TF_ADMIN=tbd-group-${GROUP_ID}-admin
 export TF_CREDS=~/.config/gcloud/tbd-admin.json
 export TF_VAR_project_name=tbd-$(openssl rand -base64 32  | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z]*//g' | cut -c1-8)
 export TF_VAR_location=europe-west2-b
+export TF_VAR_machine_type=e2-standard-2
 ```
 
 ### Create projects
 ```
-./bin/create-project.sh
+bin/create-project.sh
 export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}
 export GOOGLE_PROJECT=${TF_VAR_project_name}
 terraform init

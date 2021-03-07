@@ -7,11 +7,22 @@ terraform {
     google = {
       version = ">= 3.50"
       source  = "hashicorp/google"
-  }
+    }
 
-  google-beta = {
+    google-beta = {
       version = ">= 3.50"
       source  = "hashicorp/google"
     }
+    helm = {
+      version = ">=2.0.2"
+      source = "hashicorp/helm"
+    }
+  }
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+    config_context = "gke_tbd-fcinxird_europe-west2-b_tbd-gke-cluster"
   }
 }
