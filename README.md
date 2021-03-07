@@ -102,7 +102,21 @@ gke-tbd-gke-cluster-tbd-lab-pool-55bcfa4e-8zmq   Ready    <none>   49m   v1.18.1
 
 ```
 
+## Verify Kubernetes Spark Operator
+```
+kubectl apply -f examples/spark-pi.yaml
+#get logs
+kubectl get sparkapplications spark-pi -o=yaml
+```
+
+
 ## Delete infrastructure
 ```
 terraform destroy -var-file=env/dev.tfvars
+```
+
+## Troubleshooting
+In case of errors related to missing kubernetes provider in terraform - please try to reauthenticate:
+```
+gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_location} --project ${TF_VAR_project_name}
 ```
