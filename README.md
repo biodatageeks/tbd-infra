@@ -75,7 +75,7 @@ ACCOUNT_ID            NAME                      OPEN  MASTER_ACCOUNT_ID
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
 export GROUP_ID=998
-export TF_VAR_billing_account=011D36-51D2BA-441848
+export TF_VAR_billing_account=01D2ED-6D5A86-BF0B57
 export TF_ADMIN=tbd-group-${GROUP_ID}-admin
 export TF_CREDS=~/.config/gcloud/tbd-admin.json
 export TF_VAR_project_name=tbd-$(openssl rand -base64 32  | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z]*//g' | cut -c1-8)
@@ -84,8 +84,24 @@ export TF_VAR_location=europe-west2-b
 
 ### Create projects
 ```
-source bin/create-project.sh
+./bin/create-project.sh
+export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}
+export GOOGLE_PROJECT=${TF_VAR_project_name}
 terraform init
-terraform plan
-terraform apply
+terraform plan -var-file=env/dev.tfvars
+terraform apply -var-file=env/dev.tfvars
+```
+
+## Connect to cluster
+```
+gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_location} --project ${TF_VAR_project_name}
+➜ kubectl get nodes
+NAME                                             STATUS   ROLES    AGE   VERSION
+gke-tbd-gke-cluster-tbd-lab-pool-55bcfa4e-8zmq   Ready    <none>   49m   v1.18.12-gke.1210
+
+```
+
+## Delete infrastructure
+```
+terraform destroy -var-file=env/dev.tfvars
 ```
