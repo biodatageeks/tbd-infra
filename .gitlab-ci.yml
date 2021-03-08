@@ -28,13 +28,12 @@ before_script:
 stages:
   - validate
   - build
-#  - test
-#  - deploy
 
 validate:
   stage: validate
   script:
     - terraform validate
+  tags: [ docker ]
 
 plan:
   stage: build
@@ -46,17 +45,4 @@ plan:
       - $PLAN
     reports:
       terraform: $JSON_PLAN_FILE
-
-## Separate apply job for manual launching Terraform as it can be destructive
-## action.
-#apply:
-#  stage: deploy
-#  environment:
-#    name: production
-#  script:
-#    - terraform apply -input=false $PLAN
-#  dependencies:
-#    - plan
-#  when: manual
-#  only:
-#    - master
+  tags: [ docker ]
