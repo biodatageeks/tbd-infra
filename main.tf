@@ -8,4 +8,6 @@ module "gke" {
 
 module "spark" {
   source   = "./modules/spark"
+  endpoint = module.gke.endpoint
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
 }

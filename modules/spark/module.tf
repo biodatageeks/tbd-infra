@@ -16,3 +16,13 @@ resource "helm_release" "spark-operator" {
     value = "spark"
   }
 }
+
+data "google_client_config" "default" {}
+provider "helm" {
+  kubernetes {
+    host = var.endpoint
+    token = "${data.google_client_config.default.access_token}"
+    cluster_ca_certificate = var.cluster_ca_certificate
+
+  }
+}
