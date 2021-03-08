@@ -5,10 +5,11 @@
 # Entrypoint is also needed as image by default set `terraform` binary as an
 # entrypoint.
 image:
-  name: registry.gitlab.com/gitlab-org/gitlab-build-images:terraform
-  entrypoint:
-    - '/usr/bin/env'
-    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+  name: hashicorp/terraform:0.14.7
+  entrypoint: [""]
+#  entrypoint:
+#    - '/usr/bin/env'
+#    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 # Default output file for Terraform plan
 variables:
@@ -20,10 +21,10 @@ cache:
     - .terraform
     - .terraform.lock.hcl
 
-before_script:
-  - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
-  - terraform --version
-  - terraform init
+#before_script:
+##  - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
+#  - terraform --version
+#  - terraform init
 
 stages:
   - validate
@@ -31,6 +32,8 @@ stages:
 
 validate:
   stage: validate
+  before_script:
+    - terraform init
   script:
     - terraform validate
   tags: [ docker ]
