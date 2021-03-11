@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-     bucket  = "tbd-group-998-admin"
+     bucket  = "tbd-group-ixaudiko-admin"
      prefix  = "terraform/state"
   }
   required_providers {

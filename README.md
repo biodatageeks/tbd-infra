@@ -82,11 +82,12 @@ ACCOUNT_ID            NAME                           OPEN  MASTER_ACCOUNT_ID
 ### Export env variables
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
-export GROUP_ID=991
+export RAND_NAME=$(pwgen -1 -0 -A)
+export GROUP_ID=$RAND_NAME
 export TF_VAR_billing_account=014BE5-EF2B99-3EA413  # the one listed by gcloud beta billing accounts list
-export TF_ADMIN=tbd-group-${GROUP_ID}-admin
+export TF_ADMIN=tbd-group-${RAND_NAME}-admin
 export TF_CREDS=~/.config/gcloud/tbd-admin.json
-export TF_VAR_project_name=tbd-$(openssl rand -base64 32  | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z]*//g' | cut -c1-8)
+export TF_VAR_project_name=tbd-${RAND_NAME}
 export TF_VAR_location=europe-west3
 export TF_VAR_machine_type=e2-standard-2
 ```
@@ -113,9 +114,9 @@ gke-tbd-gke-cluster-tbd-lab-pool-55bcfa4e-8zmq   Ready    <none>   49m   v1.18.1
 
 ## Verify Kubernetes Spark Operator
 ```
-kubectl apply -f examples/spark-pi.yaml
+kubectl apply -f examples/spark-operator/spark-py-pi.yaml
 #get logs
-kubectl get sparkapplications spark-pi -o=yaml
+kubectl get sparkapplications pyspark-pi -o=yaml
 ```
 
 
