@@ -10,6 +10,22 @@ brew install helm
 ```
 ### Linux (deb-based distro, e.g. Ubuntu)
 ```
+# starting in clean Ubuntu distribution
+
+## install necessary OS tools
+apt update
+apt upgrade
+apt install sudo
+sudo apt install -y curl
+sudo apt install -y gnupg
+sudo apt install -y lsb-release
+sudo apt install -y software-properties-common
+
+## install Terraform
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
+sudo apt install -y terraform
+terraform -help
 
 ```
 
