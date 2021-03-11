@@ -15,16 +15,12 @@ brew install helm
 # starting in clean Ubuntu distribution
 docker run --rm -it ubuntu:20.04
 
-## install necessary OS tools
-export TZ=Europe/Warsaw
+## install necessary OS tools && setup env variables
+export TZ=Europe/Warsaw &&
 apt y update &&
 apt -y upgrade &&
 apt install -y sudo &&
-sudo apt install -y curl &&
-sudo apt install -y gnupg &&
-sudo apt install -y lsb-release &&
-sudo apt install -y software-properties-common
-sudo apt install -y apt-transport-https ca-certificates
+sudo apt install -y curl gnupg lsb-release software-properties-common apt-transport-https ca-certificates 
 
 
 ## install Terraform
@@ -51,6 +47,12 @@ sudo apt -y update &&
 sudo apt install -y kubectl &&
 kubectl -h
 
+## install gcloud 
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - &&
+sudo apt -y update &&
+sudo apt install -y google-cloud-sdk &&
+gcloud --help
 ```
 
 ## How to setup project
