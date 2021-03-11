@@ -10,22 +10,37 @@ brew install helm
 ```
 ### Linux (deb-based distro, e.g. Ubuntu)
 ```
+
+
 # starting in clean Ubuntu distribution
+docker run --rm -it ubuntu:20.04
 
 ## install necessary OS tools
-apt update
-apt upgrade
-apt install sudo
-sudo apt install -y curl
-sudo apt install -y gnupg
-sudo apt install -y lsb-release
+export TZ=Europe/Warsaw
+apt y update &&
+apt -y upgrade &&
+apt install -y sudo &&
+sudo apt install -y curl &&
+sudo apt install -y gnupg &&
+sudo apt install -y lsb-release &&
 sudo apt install -y software-properties-common
 
+
 ## install Terraform
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" 
-sudo apt install -y terraform
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && 
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" &&
+sudo apt install -y terraform &&
 terraform -help
+
+
+## install Helm 
+
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add - &&
+sudo apt install -y apt-transport-https &&
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list &&
+sudo apt -y update &&
+sudo apt install -y helm &&
+helm -h
 
 ```
 
