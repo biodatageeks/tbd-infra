@@ -13,3 +13,8 @@ variable "machine_type" {
   default = "e2-standard-2"
   description = "GCP machine type"
 }
+
+variable "max_node_count" {
+  type = string
+  description = "Maximum number of GKE nodes"
+}

@@ -21,10 +21,9 @@ cache:
     - .terraform
     - .terraform.lock.hcl
 
-#before_script:
-##  - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
-#  - terraform --version
-#  - terraform init
+before_script:
+  - terraform --version
+  - terraform init
 
 stages:
   - validate
@@ -32,8 +31,6 @@ stages:
 
 validate:
   stage: validate
-  before_script:
-    - terraform init
   script:
     - terraform validate
   tags: [ docker ]
