@@ -15,6 +15,8 @@ image:
 variables:
   PLAN: plan.tfplan
   JSON_PLAN_FILE: tfplan.json
+  DOCKER_VERSION: 19.03.12
+  IMAGE_NAME: tbd-os
 
 cache:
   paths:
@@ -28,6 +30,7 @@ before_script:
 stages:
   - validate
   - build
+  - buildPublish
 
 validate:
   stage: validate
@@ -45,4 +48,18 @@ plan:
       - $PLAN
     reports:
       terraform: $JSON_PLAN_FILE
+  tags: [ docker ]
+
+
+.buildPublish: &buildPublish
+  image:
+    name: docker:$DOCKER_VERSION
+  before_script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWD docker.io
+  script:
+    - cd docker/
+    - docker build
+      -t $IMAGE_NAME:$VERSION
+      .
+    - docker push $IMAGE_NAME
   tags: [ docker ]
