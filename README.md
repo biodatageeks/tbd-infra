@@ -102,17 +102,36 @@ gke-tbd-gke-cluster-tbd-lab-pool-55bcfa4e-8zmq   Ready    <none>   49m   v1.18.1
 
 ```
 
+
+## Login to grafana
+```
+#get admin user password
+kubectl get secret prometheus-community-grafana -o jsonpath='{.data}' -n default \
+| jq -r '."admin-password"' | base64 --decode
+```
+
+## Import grafana dashboards
+https://grafana.com/grafana/dashboards/6417
+https://grafana.com/grafana/dashboards/7890
+
+
+
 ## Verify Kubernetes Spark Operator
 ```
-kubectl apply -f examples/spark-pi.yaml
+kubectl apply -f examples/spark-operator/spark-pi.yaml
 #get logs
 kubectl get sparkapplications spark-pi -o=yaml
 ```
 
-
 ## Delete infrastructure
 ```
+#list all resources creates
+terraform state list
+#destroy
 terraform destroy -var-file=env/dev.tfvars
+
+#one reosource
+terraform destroy -var-file=env/dev.tfvars -target=module.prometheus.helm_release.prometheus
 ```
 
 ## Troubleshooting
