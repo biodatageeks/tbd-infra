@@ -1,0 +1,48 @@
+# This file is a template, and might need editing before it works on your project.
+# Official image for Hashicorp's Terraform. It uses light image which is Alpine
+# based as it is much lighter.
+#
+# Entrypoint is also needed as image by default set `terraform` binary as an
+# entrypoint.
+image:
+  name: hashicorp/terraform:0.14.7
+  entrypoint: [""]
+#  entrypoint:
+#    - '/usr/bin/env'
+#    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+# Default output file for Terraform plan
+variables:
+  PLAN: plan.tfplan
+  JSON_PLAN_FILE: tfplan.json
+
+cache:
+  paths:
+    - .terraform
+    - .terraform.lock.hcl
+
+before_script:
+  - terraform --version
+  - terraform init
+
+stages:
+  - validate
+  - build
+
+validate:
+  stage: validate
+  script:
+    - terraform validate
+  tags: [ docker ]
+
+plan:
+  stage: build
+  script:
+    - terraform plan -out=$PLAN -var-file=env/test.tfvars
+    - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
+  artifacts:
+    paths:
+      - $PLAN
+    reports:
+      terraform: $JSON_PLAN_FILE
+  tags: [ docker ]
