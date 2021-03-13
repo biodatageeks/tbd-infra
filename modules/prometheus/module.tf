@@ -12,6 +12,26 @@ resource "helm_release" "kube-prometheus" {
   }
 }
 
+resource "helm_release" "prometheus-gateway" {
+  name = "prometheus-pushgateway"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart = "prometheus-pushgateway"
+  version = "1.7.1"
+  namespace = "default"
+  create_namespace = true
+
+  set {
+    name = "serviceMonitor.enabled"
+    value = "true"
+  }
+
+  set {
+    name = "serviceMonitor.namespace"
+    value = "default"
+  }
+
+}
+
 data "google_client_config" "default" {}
 provider "helm" {
   kubernetes {

@@ -25,6 +25,8 @@ spec:
   imagePullPolicy: Always
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.12-3.0.0.jar"
+  arguments:
+    - "300000"
   sparkVersion: "3.0.0"
   restartPolicy:
     type: Never
@@ -34,8 +36,8 @@ spec:
         path: "/tmp"
         type: Directory
   driver:
-    cores: 1
-    coreLimit: "1200m"
+    coreRequest: "400m"
+    coreLimit: "500m"
     memory: "512m"
     labels:
       version: 3.0.0
@@ -44,8 +46,9 @@ spec:
       - name: "test-volume"
         mountPath: "/tmp"
   executor:
-    cores: 1
-    instances: 1
+    coreRequest: "400m"
+    coreLimit: "1200m"
+    instances: 2
     memory: "512m"
     labels:
       version: 3.0.0

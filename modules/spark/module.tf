@@ -18,6 +18,7 @@ resource "helm_release" "spark-operator" {
 }
 
 data "google_client_config" "default" {}
+
 provider "helm" {
   kubernetes {
     host = var.endpoint

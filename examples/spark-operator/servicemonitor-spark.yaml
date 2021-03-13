@@ -1,18 +1,16 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  annotations:
-    meta.helm.sh/release-name: prometheus-community
-    meta.helm.sh/release-namespace: default
   labels:
     app: spark
     spark-role: driver
-  name: spark-servicemonitor-driver
+    release: prometheus-community
+  name: spark-servicemonitor
 spec:
   endpoints:
     - interval: 5s
-      port: spark-driver-ui-port
-      path: /metrics
+      port: spark-ui
+      path: /metrics/executors/prometheus/
   namespaceSelector:
     matchNames:
       - default

@@ -124,6 +124,10 @@ kubectl get secret prometheus-community-grafana -o jsonpath='{.data}' -n default
 https://grafana.com/grafana/dashboards/6417
 https://grafana.com/grafana/dashboards/7890
 
+## Setup Spark monitoring
+```
+bin/spark-monitoring.sh
+```
 
 
 ## Verify Kubernetes Spark Operator
@@ -131,6 +135,48 @@ https://grafana.com/grafana/dashboards/7890
 kubectl apply -f examples/spark-operator/spark-py-pi.yaml
 #get logs
 kubectl get sparkapplications pyspark-pi -o=yaml
+```
+
+## Verify sparkctl
+```
+sparkctl list
+
+bash-3.2$ sparkctl list
++----------+---------+----------------+-----------------+
+|   NAME   |  STATE  | SUBMISSION AGE | TERMINATION AGE |
++----------+---------+----------------+-----------------+
+| spark-pi | RUNNING | 3m             | N.A.            |
++----------+---------+----------------+-----------------+
+
+
+bash-3.2$ watch sparkctl event spark-pi
+
+Every 2.0s: sparkctl event spark-pi                                                                                                                                          MacBook-Pro.local: Sat Mar 13 14:44:57 2021
+
++------------+--------+----------------------------------------------------+
+|    TYPE    |  AGE   |                      MESSAGE                       |
++------------+--------+----------------------------------------------------+
+| Normal     | 2m     | SparkApplication spark-pi                          |
+|            |        | was added, enqueuing it for                        |
+|            |        | submission                                         |
+| Normal     | 2m     | SparkApplication spark-pi was                      |
+|            |        | submitted successfully                             |
+| Normal     | 2m     | Driver spark-pi-driver is                          |
+|            |        | running                                            |
+| Normal     | 1m     | Executor                                           |
+|            |        | spark-pi-e3d282782bd37f2d-exec-1                   |
+|            |        | is pending                                         |
+| Normal     | 1m     | Executor                                           |
+|            |        | spark-pi-e3d282782bd37f2d-exec-2                   |
+|            |        | is pending                                         |
+| Normal     | 1m     | Executor                                           |
+|            |        | spark-pi-e3d282782bd37f2d-exec-1                   |
+|            |        | is running                                         |
+| Normal     | 15s    | Executor                                           |
+|            |        | spark-pi-e3d282782bd37f2d-exec-2                   |
+|            |        | is running                                         |
++------------+--------+----------------------------------------------------+
+
 ```
 
 ## Delete infrastructure
