@@ -62,7 +62,7 @@ spec:
   executor:
     coreRequest: "400m"
     coreLimit: "1200m"
-    instances: 4
+    instances: 2
     memory: "512m"
     labels:
       version: 3.0.0

@@ -6,10 +6,9 @@ resource "helm_release" "kube-prometheus" {
   namespace = "default"
   create_namespace = true
 
-  set {
-    name = "prometheus.global.scrape_interval"
-    value = "10s"
-  }
+  values = [
+    "${file("values.yaml")}"
+  ]
 }
 
 resource "helm_release" "prometheus-gateway" {
