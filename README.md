@@ -195,3 +195,36 @@ In case of errors related to missing kubernetes provider in terraform - please t
 ```
 gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_location} --project ${TF_VAR_project_name}
 ```
+
+## Monitoring K8s and Spark applications
+
+### k9s
+```
+brew install k9s
+
+ Context: gke_tbd-fcinxird_europe-west2-b_tbd-gke-cluster      <0> all       <a>      Attach     <l>       Logs                                                              ____  __.________        
+ Cluster: gke_tbd-fcinxird_europe-west2-b_tbd-gke-cluster      <1> default   <ctrl-d> Delete     <p>       Logs Previous                                                    |    |/ _/   __   \______ 
+ User:    gke_tbd-fcinxird_europe-west2-b_tbd-gke-cluster                    <d>      Describe   <shift-f> Port-Forward                                                     |      < \____    /  ___/ 
+ K9s Rev: v0.24.2                                                            <e>      Edit       <s>       Shell                                                            |    |  \   /    /\___ \  
+ K8s Rev: v1.18.12-gke.1210                                                  <?>      Help       <f>       Show PortForward                                                 |____|__ \ /____//____  > 
+ CPU:     47%                                                                <ctrl-k> Kill       <y>       YAML                                                                     \/            \/  
+ MEM:     22%                                                                                                                                                                                         
+┌──────────────────────────────────────────────────────────────────────────────────────── Pods(default)[12] ─────────────────────────────────────────────────────────────────────────────────────────┐
+│ NAME                                                      PF READY RESTARTS STATUS   CPU MEM %CPU/R %CPU/L  %MEM/R  %MEM/L IP            NODE                                             AGE      │
+│ alertmanager-prometheus-community-kube-alertmanager-0     ●  2/2          0 Running    2  13      2    n/a       5     n/a 10.124.7.12   gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   26h      │
+│ prometheus-community-grafana-5c54dcfd6b-rbxbl             ●  2/2          0 Running    1  87    n/a    n/a     n/a     n/a 10.124.7.5    gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   26h      │
+│ prometheus-community-kube-operator-7c654864cf-2xztw       ●  1/1          0 Running    3  25    n/a    n/a     n/a     n/a 10.124.7.2    gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   26h      │
+│ prometheus-community-kube-state-metrics-7cf56cd4b8-gk2p8  ●  1/1          0 Running    3   9    n/a    n/a     n/a     n/a 10.124.7.3    gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   26h      │
+│ prometheus-community-prometheus-node-exporter-8268b       ●  1/1          0 Running    5   5    n/a    n/a     n/a     n/a 10.154.0.21   gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   26h      │
+│ prometheus-community-prometheus-node-exporter-ljqff       ●  1/1          0 Running    1   4    n/a    n/a     n/a     n/a 10.154.0.23   gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-4q0v   22m      │
+│ prometheus-prometheus-community-kube-prometheus-0         ●  2/2          1 Running   18 170     18    n/a     340     n/a 10.124.7.9    gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   26h      │
+│ prometheus-pushgateway-784f97c864-9pl72                   ●  1/1          0 Running    1   7    n/a    n/a     n/a     n/a 10.124.7.14   gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   71m      │
+│ spark-operator-6d5686474b-xldbg                           ●  1/1          0 Running    1  10    n/a    n/a     n/a     n/a 10.124.7.10   gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-zsxj   23h      │
+│ spark-pi-c5a1a5782be6e5f7-exec-1                          ●  1/1          0 Running  362 318     90     30      35      35 10.124.9.5    gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-4q0v   115s     │
+│ spark-pi-c5a1a5782be6e5f7-exec-2                          ●  1/1          0 Running  407 320    101     33      35      35 10.124.9.6    gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-4q0v   115s     │
+│ spark-pi-driver                                           ●  1/1          0 Running  496 442    124     99      49      49 10.124.9.4    gke-tbd-gke-cluster-tbd-lab-pool-5094dce6-4q0v   2m25s    │
+```
+
+### Prometheus
+
+https://spark.apache.org/docs/latest/monitoring.html

@@ -16,4 +16,4 @@ spec:
       - default
   selector:
     matchLabels:
-      spark-role: driver
+      sparkSvc: driver
