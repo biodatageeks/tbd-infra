@@ -40,6 +40,10 @@ gcloud projects add-iam-policy-binding ${TF_VAR_project_name} \
   --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role roles/editor
 
+gcloud projects add-iam-policy-binding ${TF_VAR_project_name} \
+--member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
+--role roles/storage.admin
+
 ##terraform setup for storing state and conf credentials
 gsutil mb -p ${TF_ADMIN} -l ${TF_VAR_location} gs://${TF_ADMIN}
 

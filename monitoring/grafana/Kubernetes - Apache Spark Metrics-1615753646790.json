@@ -52,9 +52,23 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1615727501187,
+  "iteration": 1615727501258,
   "links": [],
   "panels": [
+    {
+      "collapsed": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 28,
+      "panels": [],
+      "title": "Application metrics",
+      "type": "row"
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -75,7 +89,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "hiddenSeries": false,
       "id": 22,
@@ -171,7 +185,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 1
       },
       "hiddenSeries": false,
       "id": 20,
@@ -209,7 +223,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "Executor CPU Time",
       "tooltip": {
         "shared": true,
@@ -266,7 +282,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 24,
@@ -362,7 +378,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 26,
@@ -399,7 +415,9 @@
         }
       ],
       "thresholds": [],
+      "timeFrom": null,
       "timeRegions": [],
+      "timeShift": null,
       "title": "Shuffle wait time",
       "tooltip": {
         "shared": true,
@@ -436,20 +454,6 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "collapsed": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 16
-      },
-      "id": 18,
-      "panels": [],
-      "title": "Application Metrics",
-      "type": "row"
     },
     {
       "collapsed": false,
@@ -1150,7 +1154,7 @@
         "hide": 0,
         "includeAll": true,
         "label": "Application run",
-        "multi": false,
+        "multi": true,
         "name": "run_id",
         "options": [],
         "query": {
