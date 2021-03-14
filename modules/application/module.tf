@@ -13,19 +13,18 @@ data "google_iam_policy" "app-viewer" {
   }
 }
 
-data "google_service_account" "tbd-lab" {}
-
-data "google_iam_policy" "app-admin" {
-  binding {
-    role = "roles/storage.admin"
-    members = [
-      google_service_account.t
-    ]
-  }
+data "google_service_account" "tbd-lab" {
+  account_id   = "tbd-lab"
 }
 
 
-
+resource "google_storage_bucket_iam_binding" "binding" {
+  bucket = google_storage_bucket.application-storage.name
+  role = "roles/storage.admin"
+  members = [
+    "serviceAccount:${data.google_service_account.tbd-lab.email}",
+  ]
+}
 
 
 resource "google_storage_bucket_iam_policy" "policy" {
