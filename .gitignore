@@ -31,4 +31,6 @@ override.tf.json
 .idea/
 .terraform.lock.hcl
 env/dev.tfvars
+
 .DS_Store
+monitoring/.DS_Store
