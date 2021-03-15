@@ -38,7 +38,8 @@ validate:
   tags: [ docker ]
 
 
-.buildPublish: &buildPublish
+buildPublish:
+  stage: buildPublish
   image:
     name: docker:$DOCKER_VERSION
   before_script:
@@ -51,9 +52,3 @@ validate:
     - docker push $IMAGE_NAME
   tags: [ docker ]
   
-  buildPublishDefault:
-  stage: buildPublish
-  variables:
-    <<: *defaultImageVars
-  <<: *buildPublish
-  except: [ master ]
