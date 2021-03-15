@@ -29,25 +29,12 @@ before_script:
 
 stages:
   - validate
-  - build
   - buildPublish
 
 validate:
   stage: validate
   script:
     - terraform validate
-  tags: [ docker ]
-
-plan:
-  stage: build
-  script:
-    - terraform plan -out=$PLAN -var-file=env/test.tfvars
-    - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
-  artifacts:
-    paths:
-      - $PLAN
-    reports:
-      terraform: $JSON_PLAN_FILE
   tags: [ docker ]
 
 
@@ -59,7 +46,14 @@ plan:
   script:
     - cd docker/
     - docker build
-      -t $IMAGE_NAME:$VERSION
+      -t $IMAGE_NAME
       .
     - docker push $IMAGE_NAME
   tags: [ docker ]
+  
+  buildPublishDefault:
+  stage: buildPublish
+  variables:
+    <<: *defaultImageVars
+  <<: *buildPublish
+  except: [ master ]
