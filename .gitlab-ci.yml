@@ -4,45 +4,89 @@
 #
 # Entrypoint is also needed as image by default set `terraform` binary as an
 # entrypoint.
-image:
-  name: hashicorp/terraform:0.14.7
-  entrypoint: [""]
+
 #  entrypoint:
 #    - '/usr/bin/env'
 #    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 
 # Default output file for Terraform plan
 variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  VERSION_FILE: version.sh
+  GIT_DEPTH: 500
   PLAN: plan.tfplan
   JSON_PLAN_FILE: tfplan.json
+  DOCKER_VERSION: 19.03.12
+  IMAGE_NAME: biodatageeks/tbd-os
 
-cache:
-  paths:
-    - .terraform
-    - .terraform.lock.hcl
-
-before_script:
-  - terraform --version
-  - terraform init
 
 stages:
+  - version
   - validate
-  - build
+  - buildPublish
+
+
+
+# --------------------------------- STAGE: version ---------------------------------------------------------------------
+version-branch:
+  stage: version
+  image:
+    name: mdomke/git-semver:v4.0.1
+    entrypoint: [""]
+  script:
+    - cd /builds/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME && git-semver --format x.y.z+m | sed 's/+/-/g' | xargs -I {} echo "export VERSION={}" > $VERSION_FILE
+    - cat $VERSION_FILE
+  artifacts:
+    paths:
+      - $VERSION_FILE
+  tags: [ docker ]
+  except: [ main, tags ]
+
+version-tag:
+  stage: version
+  image:
+    name: mdomke/git-semver:v4.0.1
+    entrypoint: [""]
+  script:
+    - cd /builds/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME && git-semver --no-hash --no-pre | xargs -I {} echo "export VERSION={}" > $VERSION_FILE
+    - cat $VERSION_FILE
+  artifacts:
+    paths:
+      - $VERSION_FILE
+  tags: [ docker ]
+  only:
+    - tags
+  except:
+    - branches
 
 validate:
   stage: validate
+  image:
+    name: hashicorp/terraform:0.14.7
+    entrypoint: [ "" ]
+  before_script:
+    - terraform --version
+    - terraform init
   script:
     - terraform validate
+  cache:
+    paths:
+      - .terraform
+      - .terraform.lock.hcl
   tags: [ docker ]
 
-plan:
-  stage: build
+buildPublish:
+  stage: buildPublish
+  image:
+    name: docker:$DOCKER_VERSION
+  before_script:
+    - source $VERSION_FILE
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWD docker.io
   script:
-    - terraform plan -out=$PLAN -var-file=env/test.tfvars
-    - "terraform show --json $PLAN | convert_report > $JSON_PLAN_FILE"
-  artifacts:
-    paths:
-      - $PLAN
-    reports:
-      terraform: $JSON_PLAN_FILE
+    - cd docker/
+    - docker build
+      -t $IMAGE_NAME:$VERSION
+      .
+    - docker push $IMAGE_NAME:$VERSION
   tags: [ docker ]
+  
