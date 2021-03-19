@@ -16,7 +16,10 @@ EOF
 : "${GROUP_ID:?ERROR: Env variable GROUP_ID not set !!!}"
 : "${TF_VAR_billing_account:?ERROR: Env variable TF_VAR_billing_account not set !!!}"
 : "${TF_VAR_location:?ERROR: Env variable TF_VAR_location not set !!!}"
+: "${TF_VAR_zone:?ERROR: Env variable TF_VAR_zone not set !!!}"
 : "${TF_VAR_machine_type:?ERROR: Env variable TF_VAR_machine_type not set !!!}"
+
+
 
 mkdir -p $SECRETS_DIR
 export TF_ADMIN=tbd-group-${GROUP_ID}-admin
@@ -32,8 +35,10 @@ echo "GOOGLE_PROJECT: ${GOOGLE_PROJECT}"
 echo "GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}"
 echo "Billing acount: ${TF_VAR_billing_account}"
 echo "Location: ${TF_VAR_location}"
+echo "Zone: ${TF_VAR_zone}"
 echo "Machine type: ${TF_VAR_machine_type}"
 echo "=========================="
+
 
 eval $@
 
