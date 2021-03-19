@@ -26,4 +26,16 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
     apt -y update && \
     apt install -y google-cloud-sdk
 
-CMD mkdir -p /home/git/ && cd /home/git/ && git clone https://github.com/biodatageeks/tbd-infra.git && /bin/bash
+CMD mkdir -p /home/git/ && \
+    cd /home/git/ && \
+    git clone https://github.com/biodatageeks/tbd-infra.git && \
+    /bin/bash
+
+RUN apt install -y wget
+RUN mkdir -p /opt/tools && \
+    cd /opt/ && wget https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz -O /opt/k9s_Linux_x86_64.tar.gz && \
+    tar zxvf k9s_Linux_x86_64.tar.gz -C /opt/tools
+
+ENV PATH=$PATH:/opt/tools
+
+WORKDIR /
