@@ -16,4 +16,3 @@ grafana:
     enabled: true
     storageClassName: standard
     size: 1Gi
-

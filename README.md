@@ -1,55 +1,5 @@
 # TBD - infrastructure setup
 
-## How to install required tools
-
-### MacOS
-```
-brew install terraform
-brew install kubectl
-brew install helm
-```
-### Linux (deb-based distro, e.g. Ubuntu)
-```
-# starting in clean Ubuntu distribution
-docker run --rm -it ubuntu:20.04
-
-## install necessary OS tools && setup env variables
-export TZ=Europe/Warsaw &&
-ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &&
-apt -y update &&
-apt -y upgrade &&
-apt install -y sudo &&
-sudo apt install -y curl gnupg lsb-release software-properties-common apt-transport-https ca-certificates pwgen
-
-
-## install Terraform
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && 
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" &&
-sudo apt install -y terraform &&
-terraform -help
-
-## install Helm 
-curl https://baltocdn.com/helm/signing.asc | sudo apt-key add - &&
-echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list &&
-sudo apt -y update &&
-sudo apt install -y helm &&
-helm -h
-
-## install kubectl
-sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg &&
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list &&
-sudo apt -y update &&
-sudo apt install -y kubectl &&
-kubectl -h
-
-## install gcloud 
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - &&
-sudo apt -y update &&
-sudo apt install -y google-cloud-sdk &&
-gcloud --help | head
-```
-
 # How to setup project
 
 ## Formal steps with Google Cloud Console (Terms of Service & Billing)
@@ -57,6 +7,40 @@ Log in on Google console https://console.cloud.google.com/ and accept Terms Of S
 
 Go to https://console.cloud.google.com/edu and enter YOUR data and coupon code. Accept terms of services.
 Go to Billing tab. -> There should be added new Billing Account (Billing Account for Education)
+
+## How to use a helper Docker image 
+Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
+```
+export IMAGE_TAG=latest
+export GROUP_ID=998 ##Watch out ! Please use the group id provided by lecturers!!!
+export PROJECT_DIR=$HOME/tbd/project
+export TF_VAR_billing_account=014BE5-EF2B99-3EA413  ### the one listed by gcloud beta billing accounts list
+export TF_VAR_location=europe-west1 ### St. Ghislain, Belgium
+export TF_VAR_zone=europe-west1-b
+export TF_VAR_machine_type=e2-standard-2
+
+mkdir -p $PROJECT_DIR
+cd $PROJECT_DIR
+docker run --rm -it \
+    -p 9090:9090 \
+    -p 9091:9091 \
+    -p 3000:3000 \
+    -v $PROJECT_DIR:/home/tbd \
+    -e GROUP_ID=$GROUP_ID \
+    -e TF_VAR_billing_account=$TF_VAR_billing_account \
+    -e TF_VAR_location=$TF_VAR_location \
+    -e TF_VAR_zone=$TF_VAR_zone \
+    -e TF_VAR_machine_type=$TF_VAR_machine_type \
+    biodatageeks/tbd-os:$IMAGE_TAG bash
+```
+
+#
+```
+
+```
+
+
+
 
 ## Setup Google Account in container
 In docker container:
@@ -79,24 +63,11 @@ ACCOUNT_ID            NAME                           OPEN  MASTER_ACCOUNT_ID
 
 ```
 
-### Export env variables
-Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
-```
-export RAND_NAME=$(pwgen -1 -0 -A)
-export GROUP_ID=$RAND_NAME
-export TF_VAR_billing_account=014BE5-EF2B99-3EA413  # the one listed by gcloud beta billing accounts list
-export TF_ADMIN=tbd-group-${RAND_NAME}-admin
-export TF_CREDS=~/.config/gcloud/tbd-admin.json
-export TF_VAR_project_name=tbd-${RAND_NAME}
-export TF_VAR_location=europe-west3
-export TF_VAR_machine_type=e2-standard-2
-```
+
 
 ### Create projects
 ```
 bin/create-project.sh
-export GOOGLE_APPLICATION_CREDENTIALS=${TF_CREDS}
-export GOOGLE_PROJECT=${TF_VAR_project_name}
 terraform init
 terraform plan -var-file=env/dev.tfvars
 terraform apply -var-file=env/dev.tfvars
@@ -121,14 +92,11 @@ kubectl get secret prometheus-community-grafana -o jsonpath='{.data}' -n default
 ```
 
 ## Import grafana dashboards
+Please import the following community dashboards
 https://grafana.com/grafana/dashboards/6417
 https://grafana.com/grafana/dashboards/7890
 
-## Setup Spark monitoring
-```
-bin/spark-monitoring.sh
-```
-
+and the one provided in `monitoring/grafana` folder.
 
 ## Verify Kubernetes Spark Operator
 ```
@@ -198,6 +166,16 @@ gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_locati
 
 ## Monitoring K8s and Spark applications
 
+### Port forwarding from a docker container
+To get port forwarding use `0.0.0.0` bind instead of default `localhost`.
+For port forwaring you can use `kubectl` or `k9s` tool
+
+### Monitoring apps ports
+
+- Grafana: 3000
+- Prometheus: 9090
+- Prometheus gateway: 9091
+
 ### k9s
 ```
 brew install k9s
@@ -228,3 +206,55 @@ brew install k9s
 ### Prometheus
 
 https://spark.apache.org/docs/latest/monitoring.html
+
+
+## (Optional) How to install required tools
+Only if you decide NOT to use the provided Docker image.
+
+### MacOS
+```
+brew install terraform
+brew install kubectl
+brew install helm
+```
+### Linux (deb-based distro, e.g. Ubuntu)
+```
+# starting in clean Ubuntu distribution
+docker run --rm -it ubuntu:20.04
+
+## install necessary OS tools && setup env variables
+export TZ=Europe/Warsaw &&
+ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &&
+apt -y update &&
+apt -y upgrade &&
+apt install -y sudo &&
+sudo apt install -y curl gnupg lsb-release software-properties-common apt-transport-https ca-certificates pwgen
+
+
+## install Terraform
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && 
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" &&
+sudo apt install -y terraform &&
+terraform -help
+
+## install Helm 
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add - &&
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list &&
+sudo apt -y update &&
+sudo apt install -y helm &&
+helm -h
+
+## install kubectl
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg &&
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list &&
+sudo apt -y update &&
+sudo apt install -y kubectl &&
+kubectl -h
+
+## install gcloud 
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - &&
+sudo apt -y update &&
+sudo apt install -y google-cloud-sdk &&
+gcloud --help | head
+```

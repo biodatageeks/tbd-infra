@@ -31,7 +31,7 @@ CMD mkdir -p /home/git/ && \
     git clone https://github.com/biodatageeks/tbd-infra.git && \
     /bin/bash
 
-RUN apt install -y wget
+RUN apt install -y wget jq
 RUN mkdir -p /opt/tools && \
     cd /opt/ && wget https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz -O /opt/k9s_Linux_x86_64.tar.gz && \
     tar zxvf k9s_Linux_x86_64.tar.gz -C /opt/tools

@@ -7,7 +7,7 @@ resource "helm_release" "kube-prometheus" {
   create_namespace = true
 
   values = [
-    "${file("values.yaml")}"
+    "${file("values-prometheus.yaml")}"
   ]
 }
 
@@ -28,6 +28,9 @@ resource "helm_release" "prometheus-gateway" {
     name = "serviceMonitor.namespace"
     value = "default"
   }
+  values = [
+    "${file("values-pushgateway.yaml")}"
+  ]
 
 }
 
