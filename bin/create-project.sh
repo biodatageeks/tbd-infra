@@ -81,6 +81,8 @@ for project in ${TF_VAR_project_name} ${TF_ADMIN};
 do
   gcloud services --project $project enable iam.googleapis.com
   gcloud services --project $project enable container.googleapis.com
+  gcloud services --project $project enable container.googleapis.com
+  gcloud services --project $project enable cloudresourcemanager.googleapis.com
 done
 
 gcloud services --project ${TF_VAR_project_name} list

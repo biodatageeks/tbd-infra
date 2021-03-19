@@ -13,10 +13,10 @@ resource "google_project_service" "tbd-service-gke" {
   disable_dependent_services = true
 }
 
-resource "google_service_account" "tbd-lab" {
-  account_id   = "tbd-lab"
-  display_name = "Service account for TBD project"
-}
+//resource "google_service_account" "tbd-lab" {
+//  account_id   = "tbd-lab"
+//  display_name = "Service account for TBD project"
+//}
 
 resource "google_container_cluster" "primary" {
   name     = "tbd-gke-cluster"
@@ -27,6 +27,10 @@ resource "google_container_cluster" "primary" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
+}
+
+data "google_service_account" "tbd-lab" {
+  account_id   = "tbd-lab"
 }
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
@@ -45,7 +49,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     machine_type = var.machine_type
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.tbd-lab.email
+    service_account = data.google_service_account.tbd-lab.email
     oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]

@@ -11,10 +11,10 @@ Go to Billing tab. -> There should be added new Billing Account (Billing Account
 ## How to use a helper Docker image 
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
-export IMAGE_TAG=latest
-export GROUP_ID=998 ##Watch out ! Please use the group id provided by lecturers!!!
+export IMAGE_TAG=0.1.1
+export GROUP_ID=997 ##Watch out ! Please use the group id provided by lecturers!!!
 export PROJECT_DIR=$HOME/tbd/project
-export TF_VAR_billing_account=014BE5-EF2B99-3EA413  ### the one listed by gcloud beta billing accounts list
+export TF_VAR_billing_account=011D36-51D2BA-441848   ### the one listed by gcloud beta billing accounts list
 export TF_VAR_location=europe-west1 ### St. Ghislain, Belgium
 export TF_VAR_zone=europe-west1-b
 export TF_VAR_machine_type=e2-standard-2
@@ -69,7 +69,7 @@ ACCOUNT_ID            NAME                           OPEN  MASTER_ACCOUNT_ID
 ```
 bin/create-project.sh
 terraform init
-terraform plan -var-file=env/dev.tfvars
+terraform plan -var-file=env/dev.tfvars 
 terraform apply -var-file=env/dev.tfvars
 ```
 
