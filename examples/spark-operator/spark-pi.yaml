@@ -23,9 +23,24 @@ spec:
   mode: cluster
   image: "gcr.io/spark-operator/spark:v3.0.0-gcs-prometheus"
   imagePullPolicy: Always
+  sparkConf:
+    "spark.ui.prometheus.enabled": "true"
+    "spark.executor.processTreeMetrics.enabled": "true"
+    "spark.eventLog.logStageExecutorMetrics": "true"
+    "spark.kubernetes.driver.annotation.prometheus.io/scrape": "true"
+    "spark.kubernetes.driver.annotation.prometheus.io/path": "/metrics/prometheus/"
+    "spark.kubernetes.driver.annotation.prometheus.io/port": "4040"
+    "spark.kubernetes.driver.service.annotation.prometheus.io/scrape": "true"
+    "spark.kubernetes.driver.service.annotation.prometheus.io/path": "/metrics/executors/prometheus/"
+    "spark.kubernetes.driver.service.annotation.prometheus.io/port": "4040"
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.12-3.0.0.jar"
+  arguments:
+    - "300000"
   sparkVersion: "3.0.0"
+  deps:
+    jars:
+      - "local:///prometheus/jmx_prometheus_javaagent-0.11.0.jar"
   restartPolicy:
     type: Never
   volumes:
@@ -34,18 +49,20 @@ spec:
         path: "/tmp"
         type: Directory
   driver:
-    cores: 1
-    coreLimit: "1200m"
+    coreRequest: "400m"
+    coreLimit: "500m"
     memory: "512m"
     labels:
       version: 3.0.0
+      sparkSvc: driver
     serviceAccount: spark
     volumeMounts:
       - name: "test-volume"
         mountPath: "/tmp"
   executor:
-    cores: 1
-    instances: 1
+    coreRequest: "400m"
+    coreLimit: "1200m"
+    instances: 2
     memory: "512m"
     labels:
       version: 3.0.0
@@ -55,6 +72,6 @@ spec:
   monitoring:
     exposeDriverMetrics: true
     exposeExecutorMetrics: true
-    prometheus:
-      jmxExporterJar: "/prometheus/jmx_prometheus_javaagent-0.11.0.jar"
-      port: 4040
+#    prometheus:
+#      jmxExporterJar: "/prometheus/jmx_prometheus_javaagent-0.11.0.jar"
+#      port: 4040

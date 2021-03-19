@@ -26,4 +26,37 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.
     apt -y update && \
     apt install -y google-cloud-sdk
 
-CMD mkdir -p /home/git/ && cd /home/git/ && git clone https://github.com/biodatageeks/tbd-infra.git && /bin/bash
+CMD mkdir -p /home/git/ && \
+    cd /home/git/ && \
+    git clone https://github.com/biodatageeks/tbd-infra.git && \
+    /bin/bash
+
+RUN apt install -y wget jq
+RUN mkdir -p /opt/tools && \
+    cd /opt/ && wget https://github.com/derailed/k9s/releases/download/v0.24.2/k9s_Linux_x86_64.tar.gz -O /opt/k9s_Linux_x86_64.tar.gz && \
+    tar zxvf k9s_Linux_x86_64.tar.gz -C /opt/tools
+
+ENV PATH=$PATH:/opt/tools
+
+RUN wget https://golang.org/dl/go1.16.2.linux-amd64.tar.gz && \
+    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.2.linux-amd64.tar.gz
+
+ENV PATH=$PATH:/usr/local/go/bin
+WORKDIR /home/git
+RUN git clone https://github.com/GoogleCloudPlatform/spark-on-k8s-operator.git && \
+    cd spark-on-k8s-operator/sparkctl && \
+    git checkout tags/spark-operator-chart-1.0.8 && \
+    go build -o sparkctl
+
+ENV PATH=$PATH:/home/git/spark-on-k8s-operator/sparkctl
+
+ENV HOME_DIR=/home
+ENV SECRETS_DIR=$HOME_DIR/tbd/secrets
+ADD resources/bin/*.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
+
+RUN mkdir -p $SECRETS_DIR
+WORKDIR $HOME_DIR
+
+EXPOSE 3000 9090 9091
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

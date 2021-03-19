@@ -6,10 +6,32 @@ resource "helm_release" "kube-prometheus" {
   namespace = "default"
   create_namespace = true
 
+  values = [
+    "${file("values-prometheus.yaml")}"
+  ]
+}
+
+resource "helm_release" "prometheus-gateway" {
+  name = "prometheus-pushgateway"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart = "prometheus-pushgateway"
+  version = "1.7.1"
+  namespace = "default"
+  create_namespace = true
+
   set {
-    name = "prometheus.global.scrape_interval"
-    value = "10s"
+    name = "serviceMonitor.enabled"
+    value = "true"
   }
+
+  set {
+    name = "serviceMonitor.namespace"
+    value = "default"
+  }
+  values = [
+    "${file("values-pushgateway.yaml")}"
+  ]
+
 }
 
 data "google_client_config" "default" {}

@@ -1,0 +1,18 @@
+prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+    retention: 180d
+
+grafana:
+  persistence:
+    enabled: true
+    storageClassName: standard
+    size: 1Gi

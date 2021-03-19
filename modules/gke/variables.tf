@@ -3,9 +3,9 @@ variable "project_name" {
   description = "Name of TBD project"
 }
 
-variable "location" {
+variable "zone" {
   type = string
-  description = "GCP location"
+  description = "GCP zone"
 }
 
 variable "machine_type" {
