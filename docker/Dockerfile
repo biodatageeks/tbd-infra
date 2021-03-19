@@ -49,3 +49,14 @@ RUN git clone https://github.com/GoogleCloudPlatform/spark-on-k8s-operator.git &
     go build -o sparkctl
 
 ENV PATH=$PATH:/home/git/spark-on-k8s-operator/sparkctl
+
+ENV HOME_DIR=/home
+ENV SECRETS_DIR=$HOME_DIR/tbd/secrets
+ADD entrypoint.sh /usr/local/
+RUN chmod +x /usr/local/entrypoint.sh
+
+RUN mkdir -p $SECRETS_DIR
+WORKDIR $HOME_DIR
+
+EXPOSE 3000 9090 9091
+ENTRYPOINT ["/usr/local/entrypoint.sh"]
