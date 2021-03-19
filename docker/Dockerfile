@@ -38,4 +38,14 @@ RUN mkdir -p /opt/tools && \
 
 ENV PATH=$PATH:/opt/tools
 
-WORKDIR /
+RUN wget https://golang.org/dl/go1.16.2.linux-amd64.tar.gz && \
+    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.2.linux-amd64.tar.gz
+
+ENV PATH=$PATH:/usr/local/go/bin
+WORKDIR /home/git
+RUN git clone https://github.com/GoogleCloudPlatform/spark-on-k8s-operator.git && \
+    cd spark-on-k8s-operator/sparkctl && \
+    git checkout tags/spark-operator-chart-1.0.8 && \
+    go build -o sparkctl
+
+ENV PATH=$PATH:/home/git/spark-on-k8s-operator/sparkctl
