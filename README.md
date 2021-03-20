@@ -12,7 +12,7 @@ Go to Billing tab. -> There should be added new Billing Account (Billing Account
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
 export IMAGE_TAG=0.1.2
-export GROUP_ID=997 ##Watch out ! Please use the group id provided by lecturers!!!
+export GROUP_ID=995 ##Watch out ! Please use the group id provided by lecturers!!!
 export PROJECT_DIR=$HOME/tbd/project
 export TF_VAR_billing_account=011D36-51D2BA-441848   ### copied from billing tab
 export TF_VAR_location=europe-west1 ### St. Ghislain, Belgium
@@ -68,7 +68,7 @@ terraform apply -var-file=env/dev.tfvars -var 'max_node_count=10'
 ```
 
 ## Connect to GKE cluster
-Run this to get access to your GKE cluster once you created it succesfully.
+Run this to get access to your GKE cluster once you created it successfully.
 ```
 gcp-login.sh
 ```
@@ -120,7 +120,22 @@ Please import the following community dashboards
 
 ## Verify Kubernetes Spark Operator
 ```
-kubectl apply -f examples/spark-operator/spark-pi.yaml
+# create ServiceMonitor
+kubectl apply -f examples/spark-operator/service-monitor.yaml
+
+#submit app and turn on monitoring
+export APP_NAME=spark-pi
+sparkctl delete $APP_NAME
+#cleanup old Spark driver service if exists
+kubectl get svc --no-headers -o custom-columns=":metadata.name" | grep $APP_NAME-[[:alnum:]]*-driver-svc | xargs -I {} kubectl delete svc {}
+kubectl apply -f examples/spark-operator/$APP_NAME.yaml
+while [ $(kubectl get svc --no-headers -o custom-columns=":metadata.name" | grep $APP_NAME-[[:alnum:]]*-driver-svc | wc -l) -lt 1 ];
+do
+echo "Service does not exists yet, waiting 1s"
+sleep 1
+done
+kubectl get svc --no-headers -o custom-columns=":metadata.name" | grep $APP_NAME-[[:alnum:]]*-driver-svc | xargs -I {} kubectl label svc {} sparkSvc=driver
+
 #get logs
 kubectl get sparkapplications spark-pi -o=yaml
 ```
@@ -168,6 +183,10 @@ spark log -f spark-pi
 Pi is roughly 3.1414334771381114
 
 ```
+
+## Verify Grafana metrics
+Navigate to grafana and check `Kubernetes - Apache Spark Metrics` dashboard if you can see any metrics of SparkPi app.
+
 
 ## Delete infrastructure
 ```

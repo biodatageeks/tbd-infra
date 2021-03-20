@@ -52,7 +52,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1615791890239,
+  "iteration": 1616246815167,
   "links": [],
   "panels": [
     {
@@ -1203,7 +1203,7 @@
           "query": "label_values(metrics_executor_completedTasks_total, application_name)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
@@ -1290,5 +1290,5 @@
   "timezone": "",
   "title": "Kubernetes - Apache Spark Metrics",
   "uid": "nqNIQUUGz",
-  "version": 7
+  "version": 2
 }
