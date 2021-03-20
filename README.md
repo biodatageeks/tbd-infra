@@ -23,6 +23,7 @@ export TF_VAR_machine_type=e2-standard-2
 mkdir -p $PROJECT_DIR
 cd $PROJECT_DIR
 docker run --rm -it \
+    --name tbd \
     -p 9090:9090 \
     -p 9091:9091 \
     -p 3000:3000 \
@@ -34,7 +35,11 @@ docker run --rm -it \
     -e TF_VAR_machine_type=$TF_VAR_machine_type \
     biodatageeks/tbd-os:$IMAGE_TAG bash
 ```
-Run obove commands whenever you would like to operate with your infrastructure on GCP, incl GKE cluster management.
+Run above commands whenever you would like to operate with your infrastructure on GCP, incl GKE cluster management.
+If you would like to connect to the running container to have multiple sessions, just run:
+```
+ docker exec -it tbd bash
+```
 
 ## Setup Google Account in container
 (Only when installing/reinstalling cluster)
@@ -51,7 +56,7 @@ gcloud auth login marek.wiewiorka@gmail.com
 ### Create projects and setup GKE cluster
 In a docker container:
 ```
-cd git/
+mkdir -p /home/tbd/git/ && cd /home/tbd/git/
 git config --global user.email "marek.wiewiorka@gmail.com"
 git config --global user.name "Marek Wiewiorka"
 git clone https://github.com/biodatageeks/tbd-infra.git
