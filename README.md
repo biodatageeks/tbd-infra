@@ -56,7 +56,7 @@ gcloud auth login marek.wiewiorka@gmail.com
 ### Create projects and setup GKE cluster
 In a docker container:
 ```
-cd git/
+mkdir -p /home/tbd/git/ && cd /home/tbd/git/
 git config --global user.email "marek.wiewiorka@gmail.com"
 git config --global user.name "Marek Wiewiorka"
 git clone https://github.com/biodatageeks/tbd-infra.git
