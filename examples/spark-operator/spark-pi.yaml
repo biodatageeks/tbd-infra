@@ -25,7 +25,7 @@ spec:
   imagePullPolicy: Always
   sparkConf:
     "spark.ui.prometheus.enabled": "true"
-    "spark.executor.processTreeMetrics.enabled": "true"
+    "spark.executor.processTreeMetrics.enabled": "false"
     "spark.eventLog.logStageExecutorMetrics": "true"
     "spark.kubernetes.driver.annotation.prometheus.io/scrape": "true"
     "spark.kubernetes.driver.annotation.prometheus.io/path": "/metrics/prometheus/"
@@ -36,7 +36,7 @@ spec:
   mainClass: org.apache.spark.examples.SparkPi
   mainApplicationFile: "local:///opt/spark/examples/jars/spark-examples_2.12-3.0.0.jar"
   arguments:
-    - "300000"
+    - "3000"
   sparkVersion: "3.0.0"
   deps:
     jars:
