@@ -120,9 +120,9 @@ Please import the following community dashboards
 
 ## Verify Kubernetes Spark Operator
 ```
-kubectl apply -f examples/spark-operator/spark-py-pi.yaml
+kubectl apply -f examples/spark-operator/spark-pi.yaml
 #get logs
-kubectl get sparkapplications pyspark-pi -o=yaml
+kubectl get sparkapplications spark-pi -o=yaml
 ```
 
 ## Verify sparkctl
@@ -162,6 +162,10 @@ Every 2.0s: sparkctl event spark-pi                                             
 |            |        | spark-pi-e3d282782bd37f2d-exec-2                   |
 |            |        | is running                                         |
 +------------+--------+----------------------------------------------------+
+
+spark log -f spark-pi 
+
+Pi is roughly 3.1414334771381114
 
 ```
 
