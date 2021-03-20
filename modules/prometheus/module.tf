@@ -19,16 +19,6 @@ resource "helm_release" "prometheus-gateway" {
   version = "1.7.1"
   namespace = "default"
   create_namespace = true
-
-  set {
-    name = "serviceMonitor.enabled"
-    value = "true"
-  }
-
-  set {
-    name = "serviceMonitor.namespace"
-    value = "default"
-  }
   values = [
     "${file("values-pushgateway.yaml")}"
   ]
