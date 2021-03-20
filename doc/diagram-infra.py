@@ -6,7 +6,7 @@ from diagrams.k8s.others import CRD
 from diagrams.onprem.analytics import Spark
 from diagrams.onprem.monitoring import Grafana, Prometheus
 
-with Diagram(show=False, outformat="png",
+with Diagram(show=False, outformat="pdf",
              filename="diagrams/tbd",
              direction="LR",
              node_attr ={"fontsize": "14"},
