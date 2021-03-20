@@ -12,6 +12,7 @@ resource "helm_release" "kube-prometheus" {
 }
 
 resource "helm_release" "prometheus-gateway" {
+  depends_on = [helm_release.kube-prometheus]
   name = "prometheus-pushgateway"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart = "prometheus-pushgateway"
@@ -32,14 +33,4 @@ resource "helm_release" "prometheus-gateway" {
     "${file("values-pushgateway.yaml")}"
   ]
 
-}
-
-data "google_client_config" "default" {}
-provider "helm" {
-  kubernetes {
-    host = var.endpoint
-    token = "${data.google_client_config.default.access_token}"
-    cluster_ca_certificate = var.cluster_ca_certificate
-
-  }
 }

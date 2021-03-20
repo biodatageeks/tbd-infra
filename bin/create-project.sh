@@ -10,17 +10,19 @@
 gcloud projects create ${TF_ADMIN} \
   --set-as-default
 
+#link billing
 gcloud beta billing projects link ${TF_ADMIN} \
   --billing-account ${TF_VAR_billing_account}
 
+#create SA for deployments
 gcloud iam service-accounts create terraform \
   --display-name "Terraform admin account"
 
-
+#regenerate key and download
 gcloud iam service-accounts keys create ${TF_CREDS} \
   --iam-account terraform@${TF_ADMIN}.iam.gserviceaccount.com
 
-
+#permissions
 gcloud projects add-iam-policy-binding ${TF_ADMIN} \
   --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role roles/viewer
@@ -33,6 +35,7 @@ gcloud projects add-iam-policy-binding ${TF_ADMIN} \
   --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role roles/editor
 
+#setup main project
 gcloud projects create ${TF_VAR_project_name}
 gcloud beta billing projects link ${TF_VAR_project_name} \
   --billing-account ${TF_VAR_billing_account}
@@ -47,6 +50,7 @@ gcloud projects add-iam-policy-binding ${TF_VAR_project_name} \
 ##terraform setup for storing state and conf credentials
 gsutil mb -p ${TF_ADMIN} -l ${TF_VAR_location} gs://${TF_ADMIN}
 
+#generate terraform config
 cat > config.tf << EOF
 terraform {
   backend "gcs" {
@@ -86,6 +90,8 @@ done
 
 
 gcloud services --project ${TF_VAR_project_name} list
+
+#permissions for managing GKE cluster
 gcloud projects add-iam-policy-binding ${TF_VAR_project_name}  \
    --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
   --role=roles/container.admin
