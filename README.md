@@ -11,10 +11,10 @@ Go to Billing tab. -> There should be added new Billing Account (Billing Account
 ## How to use a helper Docker image 
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
-export IMAGE_TAG=latest
-export GROUP_ID=998 ##Watch out ! Please use the group id provided by lecturers!!!
+export IMAGE_TAG=0.1.2
+export GROUP_ID=997 ##Watch out ! Please use the group id provided by lecturers!!!
 export PROJECT_DIR=$HOME/tbd/project
-export TF_VAR_billing_account=014BE5-EF2B99-3EA413  ### the one listed by gcloud beta billing accounts list
+export TF_VAR_billing_account=011D36-51D2BA-441848   ### copied from billing tab
 export TF_VAR_location=europe-west1 ### St. Ghislain, Belgium
 export TF_VAR_zone=europe-west1-b
 export TF_VAR_machine_type=e2-standard-2
@@ -33,56 +33,77 @@ docker run --rm -it \
     -e TF_VAR_machine_type=$TF_VAR_machine_type \
     biodatageeks/tbd-os:$IMAGE_TAG bash
 ```
-
-#
-```
-
-```
-
-
-
+Run obove commands whenever you would like to operate with your infrastructure on GCP, incl GKE cluster management.
 
 ## Setup Google Account in container
+(Only when installing/reinstalling cluster)
+
 In docker container:
 
 ```
-# initialization
-gcloud init 
-
-## nastąpi prosba o zalogowanie. Nalezy postapic zgodnie z instrukcjami. Tzn:
-## Przekleic link do przegladarki, zalogowac sie, zezwolic na uzytkownika Google SDK. Przekleic kod weryfikujacy z przegladarki do terminala.
-
-## nastąpi sugestia stworzenia projektu. Nie tworzymy go narazie.
-
-# check billing account 
-gcloud beta billing accounts list
-
-# possible output
-ACCOUNT_ID            NAME                           OPEN  MASTER_ACCOUNT_ID
-014BE5-EF2B99-3EA413  Billing Account for Education  True
+gcloud auth login marek.wiewiorka@gmail.com
 
 ```
 
 
 
-### Create projects
+### Create projects and setup GKE cluster
+In a docker container:
 ```
+cd git/
+git config --global user.email "marek.wiewiorka@gmail.com"
+git config --global user.name "Marek Wiewiorka"
+git clone https://github.com/biodatageeks/tbd-infra.git
+cd tbd-infra/
+
+#create GCP projects and service accounts
 bin/create-project.sh
-terraform init
-terraform plan -var-file=env/dev.tfvars
-terraform apply -var-file=env/dev.tfvars
+
+#setup GKE and install necessary components
+terraform init  
+#observe your infra DAG
+terraform plan -var-file=env/dev.tfvars -var 'max_node_count=10'
+#deploy it if you fully understand the execution plan displayed!
+terraform apply -var-file=env/dev.tfvars -var 'max_node_count=10'
 ```
 
-## Connect to cluster
+## Connect to GKE cluster
+Run this to get access to your GKE cluster once you created it succesfully.
 ```
-gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_location} --project ${TF_VAR_project_name}
+gcp-login.sh
+```
+## Sanity checks
+```
+root@c36be371bc27:/home/git/tbd-infra# kubectl get nodes
+NAME                                             STATUS   ROLES    AGE     VERSION
+gke-tbd-gke-cluster-tbd-lab-pool-842565a1-p7k0   Ready    <none>   7m14s   v1.18.12-gke.1210
 
-kubectl get nodes
-NAME                                             STATUS   ROLES    AGE   VERSION
-gke-tbd-gke-cluster-tbd-lab-pool-55bcfa4e-8zmq   Ready    <none>   49m   v1.18.12-gke.1210
+
+root@c36be371bc27:/home/git/tbd-infra# kubectl get pods
+NAME                                                       READY   STATUS    RESTARTS   AGE
+alertmanager-prometheus-community-kube-alertmanager-0      2/2     Running   0          84s
+prometheus-community-grafana-7f65449cd5-fb8jg              2/2     Running   0          91s
+prometheus-community-kube-operator-7c654864cf-bkczd        1/1     Running   0          91s
+prometheus-community-kube-state-metrics-7cf56cd4b8-qzf2r   1/1     Running   0          91s
+prometheus-community-prometheus-node-exporter-dbstj        1/1     Running   0          91s
+prometheus-prometheus-community-kube-prometheus-0          2/2     Running   1          83s
+prometheus-pushgateway-758d744f6-fv5kl                     1/1     Running   0          16m
+spark-operator-6d5686474b-vh6n7                            1/1     Running   0          114s
+
 
 ```
+...if you see the output of the above commands - good job ... it's not the end of the story though ;-)
 
+## Setup port forwarding
+### Port forwarding from a docker container
+To get port forwarding use `0.0.0.0` bind instead of default `localhost`.
+For port forwarding you can use `kubectl` or `k9s` tool.
+
+### Monitoring apps ports
+
+- Grafana: 3000
+- Prometheus: 9090
+- Prometheus gateway: 9091
 
 ## Login to grafana
 ```
@@ -93,10 +114,9 @@ kubectl get secret prometheus-community-grafana -o jsonpath='{.data}' -n default
 
 ## Import grafana dashboards
 Please import the following community dashboards
-https://grafana.com/grafana/dashboards/6417
-https://grafana.com/grafana/dashboards/7890
-
-and the one provided in `monitoring/grafana` folder.
+- https://grafana.com/grafana/dashboards/6417
+- https://grafana.com/grafana/dashboards/7890
+- and the one provided in `monitoring/grafana` folder.
 
 ## Verify Kubernetes Spark Operator
 ```
@@ -108,8 +128,6 @@ kubectl get sparkapplications pyspark-pi -o=yaml
 ## Verify sparkctl
 ```
 sparkctl list
-
-bash-3.2$ sparkctl list
 +----------+---------+----------------+-----------------+
 |   NAME   |  STATE  | SUBMISSION AGE | TERMINATION AGE |
 +----------+---------+----------------+-----------------+
@@ -117,7 +135,7 @@ bash-3.2$ sparkctl list
 +----------+---------+----------------+-----------------+
 
 
-bash-3.2$ watch sparkctl event spark-pi
+watch sparkctl event spark-pi
 
 Every 2.0s: sparkctl event spark-pi                                                                                                                                          MacBook-Pro.local: Sat Mar 13 14:44:57 2021
 
@@ -169,12 +187,6 @@ gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_locati
 ### Port forwarding from a docker container
 To get port forwarding use `0.0.0.0` bind instead of default `localhost`.
 For port forwaring you can use `kubectl` or `k9s` tool
-
-### Monitoring apps ports
-
-- Grafana: 3000
-- Prometheus: 9090
-- Prometheus gateway: 9091
 
 ### k9s
 ```

@@ -4,30 +4,25 @@ resource "google_storage_bucket" "application-storage" {
   force_destroy = true
 }
 
-data "google_iam_policy" "app-viewer" {
-  binding {
-    role = "roles/storage.objectViewer"
-    members = [
-      "allAuthenticatedUsers",
-    ]
-  }
-}
-
-data "google_service_account" "tbd-lab" {
+resource "google_service_account" "tbd-lab" {
   account_id   = "tbd-lab"
+  display_name = "Service account for TBD project"
 }
-
 
 resource "google_storage_bucket_iam_binding" "binding" {
+  depends_on = [google_service_account.tbd-lab]
   bucket = google_storage_bucket.application-storage.name
   role = "roles/storage.admin"
   members = [
-    "serviceAccount:${data.google_service_account.tbd-lab.email}",
+    "serviceAccount:${google_service_account.tbd-lab.email}",
   ]
 }
 
 
-resource "google_storage_bucket_iam_policy" "policy" {
+resource "google_storage_bucket_iam_binding" "binding-app-viewer" {
   bucket = google_storage_bucket.application-storage.name
-  policy_data = data.google_iam_policy.app-viewer.policy_data
+  role = "roles/storage.objectViewer"
+  members = [
+    "allAuthenticatedUsers",
+  ]
 }

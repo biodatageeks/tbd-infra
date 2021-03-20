@@ -1,4 +1,5 @@
 resource "helm_release" "spark-operator" {
+  depends_on = []
   name = "spark-operator"
   repository = "https://googlecloudplatform.github.io/spark-on-k8s-operator"
   chart = "spark-operator"
@@ -17,13 +18,3 @@ resource "helm_release" "spark-operator" {
   }
 }
 
-data "google_client_config" "default" {}
-
-provider "helm" {
-  kubernetes {
-    host = var.endpoint
-    token = "${data.google_client_config.default.access_token}"
-    cluster_ca_certificate = var.cluster_ca_certificate
-
-  }
-}
