@@ -12,7 +12,8 @@ Go to Billing tab. -> There should be added new Billing Account (Billing Account
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
 export IMAGE_TAG=0.1.2
-export GROUP_ID=995 ##Watch out ! Please use the group id provided by lecturers!!!
+export SEMESTER=2021l
+export GROUP_ID=${SEMESTER}-999 ##Watch out ! Please use the group id provided by lecturers!!!
 export PROJECT_DIR=$HOME/tbd/project
 export TF_VAR_billing_account=011D36-51D2BA-441848   ### copied from billing tab
 export TF_VAR_location=europe-west1 ### St. Ghislain, Belgium
