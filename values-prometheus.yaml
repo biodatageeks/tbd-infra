@@ -2,10 +2,12 @@ prometheus:
   prometheusSpec:
     serviceMonitorSelector:
       matchExpressions:
-        - key: app
+        - key: release
           operator: In
           values:
             - prometheus-pushgateway
+            - prometheus-community
+
     storageSpec:
       volumeClaimTemplate:
         spec:
