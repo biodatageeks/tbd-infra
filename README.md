@@ -1,5 +1,7 @@
 # TBD - infrastructure setup
 
+# Project environment
+![Alt text](doc/diagrams/tbd.png?raw=true "Title")
 # How to setup project
 
 ## Formal steps with Google Cloud Console (Terms of Service & Billing)
