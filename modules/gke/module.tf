@@ -18,6 +18,8 @@ resource "google_project_service" "tbd-service-gke" {
 //  display_name = "Service account for TBD project"
 //}
 
+
+
 resource "google_container_cluster" "primary" {
   name     = "tbd-gke-cluster"
   location = var.zone
@@ -53,5 +55,21 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "example2" {
+  metadata {
+    name = "terraform-example"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "terraform@tbd-group-997-admin.iam.gserviceaccount.com"
+    api_group = "rbac.authorization.k8s.io"
   }
 }
