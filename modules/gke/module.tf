@@ -57,19 +57,3 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     ]
   }
 }
-
-resource "kubernetes_cluster_role_binding" "example2" {
-  metadata {
-    name = "terraform-example"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-  subject {
-    kind      = "ServiceAccount"
-    name      = "terraform@tbd-group-997-admin.iam.gserviceaccount.com"
-    api_group = "rbac.authorization.k8s.io"
-  }
-}
