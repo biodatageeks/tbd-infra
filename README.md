@@ -13,7 +13,7 @@ Go to Billing tab. -> There should be added new Billing Account (Billing Account
 ## How to use a helper Docker image 
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
-export IMAGE_TAG=0.1.2
+export IMAGE_TAG=0.1.3
 export SEMESTER=2021l
 export GROUP_ID=${SEMESTER}-999 ##Watch out ! Please use the group id provided by lecturers!!!
 export PROJECT_DIR=$HOME/tbd/project

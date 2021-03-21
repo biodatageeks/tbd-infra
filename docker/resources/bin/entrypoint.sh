@@ -39,6 +39,9 @@ echo "Zone: ${TF_VAR_zone}"
 echo "Machine type: ${TF_VAR_machine_type}"
 echo "=========================="
 
+source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use java ${JAVA_VERSION}
+source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use scala ${SCALA_VERSION}
+source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk use sbt ${SBT_VERSION}
 
 eval $@
 

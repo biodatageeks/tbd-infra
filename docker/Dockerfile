@@ -1,5 +1,13 @@
 FROM    ubuntu:20.04
 
+ARG JAVA_VERSION=8.0.265.hs-adpt
+ARG SCALA_VERSION=2.12.10
+ARG SBT_VERSION=1.3.10
+ENV JAVA_VERSION=$JAVA_VERSION \
+    SCALA_VERSION=$SCALA_VERSION \
+    SBT_VERSION=$SBT_VERSION
+
+
 ENV TZ=Europe/Warsaw
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
@@ -57,6 +65,16 @@ RUN chmod +x /usr/local/bin/*.sh
 
 RUN mkdir -p $SECRETS_DIR
 WORKDIR $HOME_DIR
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt install unzip zip && \
+    curl -s https://get.sdkman.io | bash
+RUN chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh"
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install java ${JAVA_VERSION}
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install scala ${SCALA_VERSION}
+RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install sbt ${SBT_VERSION}
+
 
 EXPOSE 3000 9090 9091
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
