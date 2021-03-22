@@ -13,11 +13,12 @@ Go to Billing tab. -> There should be added new Billing Account (Billing Account
 ## How to use a helper Docker image 
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
+### setup GROUP_ID and TF_VAR_billing_account properly
 export IMAGE_TAG=0.1.3
 export SEMESTER=2021l
-export GROUP_ID=${SEMESTER}-999 ##Watch out ! Please use the group id provided by lecturers!!!
+export GROUP_ID=${SEMESTER}-NNN ## Watch out ! Please use the group id provided by lecturers!
 export PROJECT_DIR=$HOME/tbd/project
-export TF_VAR_billing_account=011D36-51D2BA-441848   ### copied from billing tab
+export TF_VAR_billing_account=NNNNNN-NNNNNN-NNNNNN   ### copied from billing tab
 export TF_VAR_location=europe-west1 ### St. Ghislain, Belgium
 export TF_VAR_zone=europe-west1-b
 export TF_VAR_machine_type=e2-standard-2
@@ -49,7 +50,7 @@ If you would like to connect to the running container to have multiple sessions,
 In docker container:
 
 ```
-gcloud auth login marek.wiewiorka@gmail.com
+gcloud auth login your.user@gmail.com
 
 ```
 
@@ -59,8 +60,8 @@ gcloud auth login marek.wiewiorka@gmail.com
 In a docker container:
 ```
 mkdir -p /home/tbd/git/ && cd /home/tbd/git/
-git config --global user.email "marek.wiewiorka@gmail.com"
-git config --global user.name "Marek Wiewiorka"
+git config --global user.email "your.mail.for.github@nnn.nn"
+git config --global user.name "YourName YourSurname"
 git clone https://github.com/biodatageeks/tbd-infra.git
 cd tbd-infra/
 
