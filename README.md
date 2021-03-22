@@ -194,7 +194,7 @@ Every 2.0s: sparkctl event spark-pi                                             
 |            |        | is running                                         |
 +------------+--------+----------------------------------------------------+
 
-spark log -f spark-pi 
+sparkctl log -f spark-pi 
 
 Pi is roughly 3.1414334771381114
 
