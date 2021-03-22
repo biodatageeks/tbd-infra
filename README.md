@@ -63,7 +63,7 @@ mkdir -p /home/tbd/git/ && cd /home/tbd/git/
 git config --global user.email "your.mail.for.github@nnn.nn"
 git config --global user.name "YourName YourSurname"
 git clone https://github.com/biodatageeks/tbd-infra.git
-cd tbd-infra/
+cd tbd-infra 
 
 #create GCP projects and service accounts
 bin/create-project.sh
@@ -73,6 +73,7 @@ terraform init
 #observe your infra DAG
 terraform plan -var-file=env/dev.tfvars -var 'max_node_count=10'
 #deploy it if you fully understand the execution plan displayed!
+# Warning!: Time needed for cluster setup: approx. 10 mins
 terraform apply -var-file=env/dev.tfvars -var 'max_node_count=10'
 ```
 
