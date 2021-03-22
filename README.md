@@ -109,6 +109,11 @@ spark-operator-6d5686474b-vh6n7                            1/1     Running   0  
 To get port forwarding use `0.0.0.0` bind instead of default `localhost`.
 For port forwarding you can use `kubectl` or `k9s` tool.
 
+Example of forwarding Grafana:
+```
+kubectl port-forward --address 0.0.0.0 $(kubectl get pods -o name | grep grafana) 3000:3000
+```
+
 ### Monitoring apps ports
 
 - Grafana: 3000
@@ -116,6 +121,7 @@ For port forwarding you can use `kubectl` or `k9s` tool.
 - Prometheus gateway: 9091
 
 ## Login to grafana
+Use `admin` as username and get admin password
 ```
 #get admin user password
 kubectl get secret prometheus-community-grafana -o jsonpath='{.data}' -n default \
