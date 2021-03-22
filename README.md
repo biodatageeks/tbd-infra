@@ -13,11 +13,12 @@ Go to Billing tab. -> There should be added new Billing Account (Billing Account
 ## How to use a helper Docker image 
 Once you have your organization and billing account as well group id set the necessary env variables, e.g.:
 ```
+### setup GROUP_ID and TF_VAR_billing_account properly
 export IMAGE_TAG=0.1.3
 export SEMESTER=2021l
-export GROUP_ID=${SEMESTER}-999 ##Watch out ! Please use the group id provided by lecturers!!!
+export GROUP_ID=${SEMESTER}-NNN ## Watch out ! Please use the group id provided by lecturers!
 export PROJECT_DIR=$HOME/tbd/project
-export TF_VAR_billing_account=011D36-51D2BA-441848   ### copied from billing tab
+export TF_VAR_billing_account=NNNNNN-NNNNNN-NNNNNN   ### copied from billing tab
 export TF_VAR_location=europe-west1 ### St. Ghislain, Belgium
 export TF_VAR_zone=europe-west1-b
 export TF_VAR_machine_type=e2-standard-2
@@ -49,7 +50,7 @@ If you would like to connect to the running container to have multiple sessions,
 In docker container:
 
 ```
-gcloud auth login marek.wiewiorka@gmail.com
+gcloud auth login your.user@gmail.com
 
 ```
 
@@ -59,10 +60,10 @@ gcloud auth login marek.wiewiorka@gmail.com
 In a docker container:
 ```
 mkdir -p /home/tbd/git/ && cd /home/tbd/git/
-git config --global user.email "marek.wiewiorka@gmail.com"
-git config --global user.name "Marek Wiewiorka"
+git config --global user.email "your.mail.for.github@nnn.nn"
+git config --global user.name "YourName YourSurname"
 git clone https://github.com/biodatageeks/tbd-infra.git
-cd tbd-infra/
+cd tbd-infra 
 
 #create GCP projects and service accounts
 bin/create-project.sh
@@ -72,6 +73,7 @@ terraform init
 #observe your infra DAG
 terraform plan -var-file=env/dev.tfvars -var 'max_node_count=10'
 #deploy it if you fully understand the execution plan displayed!
+# Warning!: Time needed for cluster setup: approx. 10 mins
 terraform apply -var-file=env/dev.tfvars -var 'max_node_count=10'
 ```
 
@@ -107,6 +109,11 @@ spark-operator-6d5686474b-vh6n7                            1/1     Running   0  
 To get port forwarding use `0.0.0.0` bind instead of default `localhost`.
 For port forwarding you can use `kubectl` or `k9s` tool.
 
+Example of forwarding Grafana:
+```
+kubectl port-forward --address 0.0.0.0 $(kubectl get pods -o name | grep grafana) 3000:3000
+```
+
 ### Monitoring apps ports
 
 - Grafana: 3000
@@ -114,6 +121,7 @@ For port forwarding you can use `kubectl` or `k9s` tool.
 - Prometheus gateway: 9091
 
 ## Login to grafana
+Use `admin` as username and get admin password
 ```
 #get admin user password
 kubectl get secret prometheus-community-grafana -o jsonpath='{.data}' -n default \
@@ -186,7 +194,7 @@ Every 2.0s: sparkctl event spark-pi                                             
 |            |        | is running                                         |
 +------------+--------+----------------------------------------------------+
 
-spark log -f spark-pi 
+sparkctl log -f spark-pi 
 
 Pi is roughly 3.1414334771381114
 
