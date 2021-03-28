@@ -220,7 +220,7 @@ terraform destroy -var-file=env/dev.tfvars -target=module.prometheus.helm_releas
 ## Troubleshooting
 In case of errors related to missing kubernetes provider in terraform - please try to reauthenticate:
 ```
-gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_location} --project ${TF_VAR_project_name}
+gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_zone} --project ${TF_VAR_project_name}
 ```
 
 ## Monitoring K8s and Spark applications
