@@ -1,4 +1,3 @@
-
 resource "google_project_service" "tbd-service-iam" {
   project = var.project_name
   service = "iam.googleapis.com"
@@ -39,10 +38,10 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "tbd-lab-pool"
   location   = var.zone
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 3
 
   autoscaling {
-    min_node_count = 1
+    min_node_count = 3
     max_node_count = var.max_node_count
   }
 

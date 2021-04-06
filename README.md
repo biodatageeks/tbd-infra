@@ -31,6 +31,7 @@ docker run --rm -it \
     -p 9091:9091 \
     -p 3000:3000 \
     -p 4040:4040 \
+    -p 8080:8080 \
     -v $PROJECT_DIR:/home/tbd \
     -e GROUP_ID=$GROUP_ID \
     -e TF_VAR_billing_account=$TF_VAR_billing_account \
@@ -121,6 +122,7 @@ kubectl port-forward --address 0.0.0.0 $(kubectl get pods -o name | grep grafana
 - Prometheus: 9090
 - Prometheus gateway: 9091
 - Spark UI: 4040
+- Airflow: 8080
 
 ## Login to grafana
 Use `admin` as username and get admin password

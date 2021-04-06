@@ -1,0 +1,296 @@
+###################################
+# Airflow - Common Configs
+###################################
+airflow:
+  ## the airflow executor type to use
+  ##
+  executor: CeleryExecutor
+
+  ## the fernet key used to encrypt the connections in the database
+  ##
+  fernetKey: "7T512UXSSmBOkpWimFHIVb8jK6lfmSAvx4mO6Arehnc="
+
+  ## environment variables for the web/scheduler/worker Pods (for airflow configs)
+  ##
+  config:
+    ## security
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "False"
+
+    ## dags
+    AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: "30"
+
+  ## a list of initial users to create
+  ##
+  users:
+    - username: admin
+      password: admin
+      role: Admin
+      email: admin@example.com
+      firstName: admin
+      lastName: admin
+
+  ## if we update users or just create them the first time (lookup by `username`)
+  ##
+  usersUpdate: true
+
+  ## a list of initial connections to create
+  ##
+  connections:
+    ## see docs: https://airflow.apache.org/docs/apache-airflow-providers-google/stable/connections/gcp.html
+    - id: my_gcp
+      type: google_cloud_platform
+      description: my GCP connection
+      extra: |-
+        { "extra__google_cloud_platform__num_retries": "5" }
+
+  ## a list of initial variables to create
+  ##
+  variables:
+    - key: "environment"
+      value: "prod"
+
+  ## a list of initial pools to create
+  ##
+  pools:
+    - name: "pool_1"
+      slots: 5
+      description: "example pool with 3 slots"
+    - name: "pool_2"
+      slots: 10
+      description: "example pool with 5 slots"
+
+
+
+###################################
+# Airflow - Scheduler Configs
+###################################
+scheduler:
+  ## the number of scheduler Pods to run
+  ##
+  replicas: 1
+  ## resource requests/limits for the scheduler Pod
+  ##
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "512Mi"
+
+###################################
+# Airflow - WebUI Configs
+###################################
+web:
+  ## configs to generate webserver_config.py
+  ##
+  webserverConfig:
+    ## the full text value to mount as the webserver_config.py file
+    ##
+    stringOverride: |-
+      from flask_appbuilder.security.manager import AUTH_DB
+      # use embedded DB for auth
+      AUTH_TYPE = AUTH_DB
+  ## the number of web Pods to run
+  ##
+  replicas: 1
+
+  ## resource requests/limits for the airflow web Pods
+  ##
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "900Mi"
+
+  ## configs for the web Pods' liveness probe
+  ##
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+
+###################################
+# Airflow - Worker Configs
+###################################
+workers:
+  ## if the airflow workers StatefulSet should be deployed
+  ##
+  enabled: true
+
+  ## the number of workers Pods to run
+  ##
+  replicas: 2
+
+  ## resource requests/limits for the airflow worker Pods
+  ##
+  resources:
+    requests:
+      cpu: "256m"
+      memory: "2Gi"
+
+  ## configs for the PodDisruptionBudget of the worker StatefulSet
+  ##
+  podDisruptionBudget:
+    ## if a PodDisruptionBudget resource is created for the worker StatefulSet
+    ##
+    enabled: true
+
+    ## the maximum unavailable pods/percentage for the worker StatefulSet
+    ##
+    ## NOTE:
+    ## - prevents loosing more than 20% of current worker task slots in a voluntary
+    ##   disruption
+    ##
+    maxUnavailable: "20%"
+
+  ## configs for the HorizontalPodAutoscaler of the worker Pods
+  ##
+  autoscaling:
+    enabled: true
+    maxReplicas: 10
+    metrics:
+      - type: Resource
+        resource:
+          name: memory
+          target:
+            type: Utilization
+            averageUtilization: 80
+
+  ## configs for the celery worker Pods
+  ##
+  celery:
+    ## the number of tasks each celery worker can run at a time
+    ##
+    ## NOTE:
+    ## - sets AIRFLOW__CELERY__WORKER_CONCURRENCY
+    ##
+    instances: 10
+
+    ## if we should wait for tasks to finish before SIGTERM of the celery worker
+    ##
+    gracefullTermination: true
+
+    ## how many seconds to wait for tasks to finish before SIGTERM of the celery worker
+    ##
+    ## WARNING:
+    ## - GKE cluster-autoscaler will not respect graceful termination period over 10min
+    ## NOTE:
+    ## - this gives any running tasks AT MOST 9min to complete
+    ##
+    gracefullTerminationPeriod: 540
+
+  ## how many seconds to wait after SIGTERM before SIGKILL of the celery worker
+  ##
+  terminationPeriod: 60
+
+###################################
+# Airflow - Flower Configs
+###################################
+flower:
+  ## if the Flower UI should be deployed
+  ##
+  enabled: true
+
+  ## resource requests/limits for the flower Pods
+  ##
+  resources:
+    requests:
+      cpu: "10m"
+      memory: "64Mi"
+
+  ## configs for the Service of the flower Pods
+  ##
+  service:
+    annotations: {}
+    type: ClusterIP
+    externalPort: 5555
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+
+###################################
+# Airflow - Logs Configs
+###################################
+logs:
+  ## configs for the logs PVC
+  ##
+  persistence:
+    ## if a persistent volume is mounted at `logs.path`
+    ##
+    enabled: false
+
+###################################
+# Airflow - DAGs Configs
+###################################
+dags:
+  ## the airflow dags folder
+  ##
+  path: /opt/airflow/dags
+
+###################################
+# Kubernetes - RBAC
+###################################
+rbac:
+  ## if Kubernetes RBAC resources are created
+  ##
+  create: true
+
+###################################
+# Kubernetes - Service Account
+###################################
+serviceAccount:
+  ## if a Kubernetes ServiceAccount is created
+  ##
+  create: true
+
+  ## the name of the ServiceAccount
+  ##
+  name: "airflow"
+
+  ## annotations for the ServiceAccount
+  ##
+  annotations:
+    iam.gke.io/gcp-service-account: airflow-cluster1@tbd-2021l-123.iam.gserviceaccount.com
+
+###################################
+# Database - PostgreSQL Chart
+###################################
+postgresql:
+  enabled: false
+
+externalDatabase:
+  ## the type of external database: {mysql,postgres}
+  ##
+  type: postgres
+
+  ## the host of the external database
+  ##
+  host: acid-minimal-cluster
+
+  ## the port of the external database
+  ##
+  port: 5432
+
+  ## the database/scheme to use within the the external database
+  ##
+  database: airflow_db
+
+  ## the user of the external database
+  ##
+  user: airflow_user
+
+  ## the name of a pre-created secret containing the external database password
+  ##
+  passwordSecret: "airflow-user.acid-minimal-cluster.credentials.postgresql.acid.zalan.do"
+
+  ## the key within `externalDatabase.passwordSecret` containing the password string
+  ##
+  passwordSecretKey: "password"
+
+  ## the connection properties for external database, e.g. "?sslmode=require"
+  properties: "?sslmode=require"
+
+###################################
+# Database - Redis Chart
+###################################
+redis:
+  enabled: true

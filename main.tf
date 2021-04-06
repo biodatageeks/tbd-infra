@@ -18,10 +18,27 @@ data "google_client_config" "default" {}
 provider "helm" {
   kubernetes {
     host = module.gke.endpoint
-    token = "${data.google_client_config.default.access_token}"
+    token = data.google_client_config.default.access_token
     cluster_ca_certificate = module.gke.cluster_ca_certificate
-
   }
+}
+
+provider "kubernetes" {
+  host = "https://${module.gke.endpoint}"
+  token = data.google_client_config.default.access_token
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
+}
+
+module "postgres" {
+  source = "./modules/postgres"
+  depends_on = [module.gke]
+}
+
+module "airflow" {
+  source = "./modules/airflow"
+  depends_on = [module.gke]
+  project_name = var.project_name
+  location = var.location
 }
 
 module "spark" {
@@ -30,10 +47,7 @@ module "spark" {
 
 }
 
-
 module "prometheus" {
   source   = "./modules/prometheus"
   depends_on = [module.gke]
 }
-
-
