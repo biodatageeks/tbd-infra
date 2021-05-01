@@ -2,21 +2,21 @@ apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
   name: acid-minimal-cluster
-  namespace: airflow-cluster1
+  namespace: default
 spec:
   teamId: "acid"
   volume:
     size: 1Gi
   numberOfInstances: 2
   users:
-    zalando:  # database owner
+    zalando:
       - superuser
       - createdb
     airflow_user:
       - superuser
-      - createdb  # role for application foo
+      - createdb
   databases:
-    foo: zalando  # dbname: owner
+    foo: zalando
     airflow_db: airflow_user
   preparedDatabases:
     bar: {}

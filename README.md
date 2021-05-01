@@ -65,6 +65,7 @@ mkdir -p /home/tbd/git/ && cd /home/tbd/git/
 git config --global user.email "your.mail.for.github@nnn.nn"
 git config --global user.name "YourName YourSurname"
 git clone https://github.com/biodatageeks/tbd-infra.git
+git clone https://github.com/zalando/postgres-operator.git
 cd tbd-infra 
 
 #create GCP projects and service accounts

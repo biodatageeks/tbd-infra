@@ -17,7 +17,7 @@ airflow:
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "False"
 
     ## dags
-    AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "True"
     AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: "30"
 
   ## a list of initial users to create
@@ -29,10 +29,16 @@ airflow:
       email: admin@example.com
       firstName: admin
       lastName: admin
+    - username: user
+      password: user
+      role: User
+      email: user@example.com
+      firstName: user
+      lastName: user
 
   ## if we update users or just create them the first time (lookup by `username`)
   ##
-  usersUpdate: true
+  usersUpdate: false
 
   ## a list of initial connections to create
   ##
@@ -59,8 +65,6 @@ airflow:
     - name: "pool_2"
       slots: 10
       description: "example pool with 5 slots"
-
-
 
 ###################################
 # Airflow - Scheduler Configs
@@ -249,7 +253,7 @@ serviceAccount:
   ## annotations for the ServiceAccount
   ##
   annotations:
-    iam.gke.io/gcp-service-account: airflow-cluster1@tbd-2021l-123.iam.gserviceaccount.com
+    iam.gke.io/gcp-service-account: default@tbd-2021l-123.iam.gserviceaccount.com
 
 ###################################
 # Database - PostgreSQL Chart
