@@ -36,7 +36,7 @@ module "postgres" {
 
 module "airflow" {
   source = "./modules/airflow"
-  depends_on = [module.gke]
+  depends_on = [module.gke, module.postgres]
   project_name = var.project_name
   location = var.location
 }
@@ -44,7 +44,6 @@ module "airflow" {
 module "spark" {
   source   = "./modules/spark"
   depends_on = [module.gke]
-
 }
 
 module "prometheus" {
