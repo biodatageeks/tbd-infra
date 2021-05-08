@@ -4,7 +4,7 @@ resource "google_service_account" "airflow-service-account" {
 }
 
 resource "google_storage_bucket" "airflow-logs-storage" {
-  name = "tbd-2021l-123-logs-storage"
+  name = var.logs_bucket
   location = var.location
   force_destroy = true
 }
