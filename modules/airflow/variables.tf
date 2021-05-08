@@ -7,3 +7,9 @@ variable "location" {
   type = string
   description = "GCP location"
 }
+
+variable "logs_bucket" {
+  type = string
+  default = "tbd-airflow-logs"
+  description = "Airflow logs location"
+}
