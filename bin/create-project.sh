@@ -67,6 +67,11 @@ terraform {
       version = ">= 3.50"
       source  = "hashicorp/google"
     }
+
+  kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
   }
 }
 EOF

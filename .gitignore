@@ -34,3 +34,5 @@ env/dev.tfvars
 
 .DS_Store
 monitoring/.DS_Store
+
+doc/devel.md
