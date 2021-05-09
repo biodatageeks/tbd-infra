@@ -24,7 +24,9 @@ resource "helm_release" "kube-airflow" {
   chart = "airflow"
   version = "8.0.9"
   namespace = "default"
-  wait = false
+  wait = true
+  atomic = true
+  timeout = 3600
 
   values = [
     file("${path.module}/resources/config.yaml")

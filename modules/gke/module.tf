@@ -38,10 +38,10 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "tbd-lab-pool"
   location   = var.zone
   cluster    = google_container_cluster.primary.name
-  node_count = 3
+  node_count = 1
 
   autoscaling {
-    min_node_count = 3
+    min_node_count = 1
     max_node_count = var.max_node_count
   }
 

@@ -1,3 +1,4 @@
-variable "postgres_chart_path" {
-  default = "../postgres-operator/charts/postgres-operator"
+variable "chart_version" {
+  type = string
+  default = "1.6.2"
 }
