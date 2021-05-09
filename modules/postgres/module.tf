@@ -1,8 +1,10 @@
 resource "helm_release" "postgres" {
-  chart = var.postgres_chart_path
+  chart = "https://raw.githubusercontent.com/zalando/postgres-operator/master/charts/postgres-operator/postgres-operator-${var.chart_version}.tgz"
   name = "postgres-operator"
   namespace = "default"
-  wait = false
+  wait = true
+  atomic = true
+  timeout = 3600
 
   values = [
     file("${path.module}/resources/config.yaml")
