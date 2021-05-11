@@ -18,15 +18,14 @@ resource "google_storage_bucket_iam_binding" "binding" {
   ]
 }
 
+//wait = false -> https://github.com/hashicorp/terraform-provider-helm/issues/683
 resource "helm_release" "kube-airflow" {
   name = "airflow-stable"
   repository = "https://airflow-helm.github.io/charts"
   chart = "airflow"
   version = "8.0.9"
   namespace = "default"
-  wait = true
-  atomic = true
-  timeout = 3600
+  wait = false
 
   values = [
     file("${path.module}/resources/config.yaml")
