@@ -18,10 +18,18 @@ data "google_client_config" "default" {}
 provider "helm" {
   kubernetes {
     host = module.gke.endpoint
-    token = "${data.google_client_config.default.access_token}"
+    token = data.google_client_config.default.access_token
     cluster_ca_certificate = module.gke.cluster_ca_certificate
 
   }
+}
+
+provider "kubectl" {
+  host                   = module.gke.endpoint
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
+  token                  = data.google_client_config.default.access_token
+  load_config_file       = false
+  apply_retry_count = 15
 }
 
 module "spark" {
@@ -30,10 +38,13 @@ module "spark" {
 
 }
 
-
 module "prometheus" {
   source   = "./modules/prometheus"
   depends_on = [module.gke]
 }
 
+module "ingress" {
+  source   = "./modules/ingress"
+  depends_on = [module.gke]
+}
 
