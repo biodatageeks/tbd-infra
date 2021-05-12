@@ -51,27 +51,11 @@ gcloud projects add-iam-policy-binding ${TF_VAR_project_name} \
 gsutil mb -p ${TF_ADMIN} -l ${TF_VAR_location} gs://${TF_ADMIN}
 
 #generate terraform config
-cat > config.tf << EOF
+cat > state.tf << EOF
 terraform {
   backend "gcs" {
      bucket  = "${TF_ADMIN}"
      prefix  = "terraform/state"
-  }
-  required_providers {
-    google = {
-      version = ">= 3.50"
-      source  = "hashicorp/google"
-  }
-
-  google-beta = {
-      version = ">= 3.50"
-      source  = "hashicorp/google"
-    }
-
-  kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
-    }
   }
 }
 EOF

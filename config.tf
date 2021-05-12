@@ -3,16 +3,17 @@ terraform {
     google = {
       version = ">= 3.50"
       source  = "hashicorp/google"
-    }
+  }
 
-    google-beta = {
+  google-beta = {
       version = ">= 3.50"
       source  = "hashicorp/google"
     }
 
-    kubectl = {
+  kubectl = {
       source  = "gavinbunney/kubectl"
       version = ">= 1.7.0"
     }
   }
 }
+

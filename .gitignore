@@ -36,3 +36,5 @@ env/dev.tfvars
 monitoring/.DS_Store
 
 doc/devel.md
+
+state.tf
