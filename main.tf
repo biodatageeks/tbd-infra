@@ -29,6 +29,14 @@ provider "kubernetes" {
   cluster_ca_certificate = module.gke.cluster_ca_certificate
 }
 
+provider "kubectl" {
+  host                   = module.gke.endpoint
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
+  token                  = data.google_client_config.default.access_token
+  load_config_file       = false
+  apply_retry_count = 15
+}
+
 module "postgres" {
   source = "./modules/postgres"
   depends_on = [module.gke]
@@ -48,5 +56,10 @@ module "spark" {
 
 module "prometheus" {
   source   = "./modules/prometheus"
+  depends_on = [module.gke]
+}
+
+module "ingress" {
+  source   = "./modules/ingress"
   depends_on = [module.gke]
 }
