@@ -62,6 +62,6 @@ module "prometheus" {
 
 module "ingress" {
   source   = "./modules/ingress"
-  depends_on = [module.gke]
+  depends_on = [module.gke, module.airflow, module.prometheus]
 }
 
