@@ -7,6 +7,7 @@ prometheus:
           values:
             - prometheus-pushgateway
             - prometheus-community
+            - airflow-stable
 
     storageSpec:
       volumeClaimTemplate:

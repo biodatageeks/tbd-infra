@@ -50,15 +50,12 @@ If you would like to connect to the running container to have multiple sessions,
 (Only when installing/reinstalling cluster)
 
 In docker container:
-
 ```
 gcloud auth login your.user@gmail.com
 
 ```
 
-
-
-### Create projects and setup GKE cluster
+### Create projects
 In a docker container:
 ```
 mkdir -p /home/tbd/git/ && cd /home/tbd/git/
@@ -69,7 +66,27 @@ cd tbd-infra
 
 #create GCP projects and service accounts
 bin/create-project.sh
+```
+### Airflow setup
+To use Airflow, you should configure remote git repository with DAGs. In `main.tf` file, fill `git_secret_path` variable
+with local path to private ssh key file. You can find more information about SSH keys in
+[this](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh) tutorial.
+```
+module "airflow" {
+  ...
+  git_secret_path = "<PATH_TO_PRIVATE_SSH_KEY_FILE>"
+}
+```
+Moreover, you must pass SSH URL to your repository in `modules/airflow/resources/config.yaml` file.
+```
+  gitSync:
+    ...
+    repo: "<YOUR_GIT_REPO_SSH_URL>"
+```
 
+### Create cloud infrastructure
+Now you can create defined cloud infrastructure using Terraform.
+```
 #setup GKE and install necessary components
 terraform init  
 #observe your infra DAG

@@ -18,6 +18,27 @@ resource "google_storage_bucket_iam_binding" "binding" {
   ]
 }
 
+terraform {
+  required_providers {
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+  }
+}
+
+resource "kubectl_manifest" "git_secret" {
+  yaml_body = <<YAML
+apiVersion: v1
+kind: Secret
+metadata:
+  name: airflow-ssh-git-secret
+type: Opaque
+data:
+  id_rsa: "${base64encode(file(var.git_secret_path))}"
+YAML
+}
+
 //wait = false -> https://github.com/hashicorp/terraform-provider-helm/issues/683
 resource "helm_release" "kube-airflow" {
   name = "airflow-stable"
@@ -30,4 +51,5 @@ resource "helm_release" "kube-airflow" {
   values = [
     file("${path.module}/resources/config.yaml")
   ]
+  depends_on = [kubectl_manifest.git_secret]
 }

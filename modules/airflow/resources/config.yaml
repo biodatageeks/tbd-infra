@@ -18,7 +18,7 @@ airflow:
 
     ## dags
     AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: "30"
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: "60"
 
   ## a list of initial users to create
   ##
@@ -65,6 +65,19 @@ airflow:
     - name: "pool_2"
       slots: 10
       description: "example pool with 5 slots"
+
+  extraPipPackages:
+    - "airflow-exporter"
+
+  kubernetesPodTemplate:
+    ## extra pip packages to install in the Pod template
+    ##
+    ## EXAMPLE:
+    ##   extraPipPackages:
+    ##     - "SomeProject==1.0.0"
+    ##
+    extraPipPackages:
+      - "airflow-exporter"
 
 ###################################
 # Airflow - Scheduler Configs
@@ -148,6 +161,16 @@ dags:
   ##
   path: /opt/airflow/dags
 
+  gitSync:
+    enabled: true
+    repo: "<YOUR_GIT_REPO_SSH_URL>"
+    branch: "main"
+    revision: "HEAD"
+    syncWait: 60
+    sshSecret: "airflow-ssh-git-secret"
+    sshSecretKey: "id_rsa"
+    sshKnownHosts: ""
+
 ###################################
 # Kubernetes - RBAC
 ###################################
@@ -216,3 +239,32 @@ externalDatabase:
 ###################################
 redis:
   enabled: false
+
+######################################
+# Prometheus Operator - ServiceMonitor
+######################################
+serviceMonitor:
+  ## if ServiceMonitor resources should be deployed for airflow webserver
+  ##
+  ## WARNING:
+  ## - you will need an exporter in your airflow docker container, for example:
+  ##   https://github.com/epoch8/airflow-exporter
+  ##
+  ## NOTE:
+  ## - you can install pip packages with `airflow.extraPipPackages`
+  ## - ServiceMonitor is a resource from: https://github.com/prometheus-operator/prometheus-operator
+  ##
+  enabled: true
+
+  ## labels for ServiceMonitor, so that Prometheus can select it
+  ##
+  selector:
+    prometheus: airflow-web
+
+  ## the ServiceMonitor web endpoint path
+  ##
+  path: /admin/metrics
+
+  ## the ServiceMonitor web endpoint interval
+  ##
+  interval: "30s"

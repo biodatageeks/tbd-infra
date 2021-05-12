@@ -13,3 +13,8 @@ variable "logs_bucket" {
   default = "tbd-airflow-logs"
   description = "Airflow logs location"
 }
+
+variable "git_secret_path" {
+  type = string
+  description = "Private Git SSH key"
+}
