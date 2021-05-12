@@ -158,3 +158,51 @@ spec:
               servicePort: 9090
 YAML
 }
+
+
+resource "kubectl_manifest" "airflow-certificate" {
+  depends_on = [helm_release.cert-manager]
+  yaml_body = <<YAML
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: airflow-cert
+  namespace: default
+spec:
+  secretName: airflow-certificate
+  issuerRef:
+    name: letsencrypt
+  dnsNames:
+  - ${var.airflow_host}
+YAML
+}
+
+resource "kubectl_manifest" "ingress-airflow" {
+  depends_on = [helm_release.cert-manager, helm_release.nginx-ingress]
+  yaml_body = <<YAML
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingressrule-airflow
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    cert-manager.io/issue-temporary-certificate: "false"
+    nginx.ingress.kubernetes.io/permanent-redirect: https://${var.airflow_host}
+spec:
+  tls:
+  - hosts:
+    - ${var.airflow_host}
+    secretName: airflow-certificate
+  rules:
+    - host: ${var.airflow_host}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: airflow-stable-web
+              servicePort: 8080
+YAML
+}
