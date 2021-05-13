@@ -25,5 +25,17 @@ resource "helm_release" "prometheus-gateway" {
   values = [
     file("values-pushgateway.yaml")
   ]
+}
 
+terraform {
+  required_providers {
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
+  }
+}
+
+resource "kubectl_manifest" "spark-service-monitor" {
+  yaml_body = file("${path.root}/examples/spark-operator/service-monitor.yaml")
 }

@@ -10,7 +10,7 @@ variable "location" {
 
 variable "logs_bucket" {
   type = string
-  default = "tbd-airflow-logs"
+  default = "tbd-2021-airflow-logs"
   description = "Airflow logs location"
 }
 

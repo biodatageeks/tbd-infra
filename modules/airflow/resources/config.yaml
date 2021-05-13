@@ -49,6 +49,12 @@ airflow:
       description: my GCP connection
       extra: |-
         { "extra__google_cloud_platform__num_retries": "5" }
+    - id: kubernetes_default
+      type: kubernetes
+      description: Default Kubernetes cluster connection
+      namespace: default
+      extra: |-
+        { "extra__kubernetes__in_cluster": "True" }
 
   ## a list of initial variables to create
   ##
@@ -68,16 +74,7 @@ airflow:
 
   extraPipPackages:
     - "airflow-exporter"
-
-  kubernetesPodTemplate:
-    ## extra pip packages to install in the Pod template
-    ##
-    ## EXAMPLE:
-    ##   extraPipPackages:
-    ##     - "SomeProject==1.0.0"
-    ##
-    extraPipPackages:
-      - "airflow-exporter"
+    - "apache-airflow-providers-cncf-kubernetes"
 
 ###################################
 # Airflow - Scheduler Configs
@@ -178,6 +175,38 @@ rbac:
   ## if Kubernetes RBAC resources are created
   ##
   create: true
+
+###################################
+# Kubernetes - Extra Manifests
+###################################
+## extra Kubernetes manifests to include alongside this chart
+##
+## NOTE:
+## - this can be used to include ANY Kubernetes YAML resource
+##
+## EXAMPLE:
+##   extraManifests:
+##    - apiVersion: cloud.google.com/v1beta1
+##      kind: BackendConfig
+##      metadata:
+##        name: "{{ .Release.Name }}-test"
+##      spec:
+##        securityPolicy:
+##          name: "gcp-cloud-armor-policy-test"
+##
+extraManifests:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: airflow-spark-jobs
+    subjects:
+      - kind: ServiceAccount
+        name: airflow
+        namespace: default
+    roleRef:
+      kind: ClusterRole
+      name: spark-operator
+      apiGroup: rbac.authorization.k8s.io
 
 ###################################
 # Kubernetes - Service Account
