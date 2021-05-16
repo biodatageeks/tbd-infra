@@ -6,6 +6,9 @@ resource "helm_release" "spark-operator" {
   version = "1.0.7"
   namespace = "default"
   create_namespace = true
+  wait = true
+  atomic = true
+  timeout = 3600
 
   set {
     name = "serviceAccounts.spark.create"

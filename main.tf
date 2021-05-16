@@ -20,8 +20,13 @@ provider "helm" {
     host = module.gke.endpoint
     token = data.google_client_config.default.access_token
     cluster_ca_certificate = module.gke.cluster_ca_certificate
-
   }
+}
+
+provider "kubernetes" {
+  host = "http://${module.gke.endpoint}"
+  token = data.google_client_config.default.access_token
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
 }
 
 provider "kubectl" {
@@ -32,10 +37,22 @@ provider "kubectl" {
   apply_retry_count = 15
 }
 
+module "postgres" {
+  source = "./modules/postgres"
+  depends_on = [module.gke]
+}
+
+module "airflow" {
+  source = "./modules/airflow"
+  depends_on = [module.gke, module.postgres]
+  project_name = var.project_name
+  location = var.location
+  git_secret_path = "<PATH_TO_PRIVATE_SSH_KEY_FILE>"
+}
+
 module "spark" {
   source   = "./modules/spark"
   depends_on = [module.gke]
-
 }
 
 module "prometheus" {
@@ -47,4 +64,3 @@ module "ingress" {
   source   = "./modules/ingress"
   depends_on = [module.gke]
 }
-
