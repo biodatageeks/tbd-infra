@@ -11,13 +11,16 @@ resource "helm_release" "postgres" {
   ]
 }
 
-resource "null_resource" "kubectl_create_cluster" {
-  triggers = {
-    manifest_contents = filemd5("${path.module}/resources/manifest.yaml")
+terraform {
+  required_providers {
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
   }
+}
 
-  provisioner "local-exec" {
-    command = "gcp-login.sh && kubectl create -f ${path.module}/resources/manifest.yaml"
-  }
+resource "kubectl_manifest" "kubectl_create_cluster" {
+  yaml_body = file("${path.module}/resources/manifest.yaml")
   depends_on = [helm_release.postgres]
 }
