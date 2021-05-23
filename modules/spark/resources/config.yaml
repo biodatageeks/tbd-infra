@@ -1,0 +1,15 @@
+serviceAccounts:
+  spark:
+    create: true
+    name: "spark"
+
+# -- Prometheus pod monitor for operator's pod.
+podMonitor:
+  # -- If enabled, a pod monitor for operator's pod will be submitted. Note that prometheus metrics should be enabled as well.
+  enable: true
+  # -- The label to use to retrieve the job name from
+  jobLabel: spark-operator-podmonitor
+  # -- Prometheus metrics endpoint properties. `metrics.portName` will be used as a port
+  podMetricsEndpoint:
+    scheme: http
+    interval: 5s
