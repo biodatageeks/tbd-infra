@@ -54,13 +54,7 @@ resource "helm_release" "spark-operator" {
   atomic = true
   timeout = 3600
 
-  set {
-    name = "serviceAccounts.spark.create"
-    value = "true"
-  }
-
-  set {
-    name = "serviceAccounts.spark.name"
-    value = "spark"
-  }
+  values = [
+    file("${path.module}/resources/config.yaml")
+  ]
 }

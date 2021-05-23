@@ -8,6 +8,9 @@ prometheus:
             - prometheus-pushgateway
             - prometheus-community
             - airflow-stable
+    # match pod monitors
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
 
     storageSpec:
       volumeClaimTemplate:
