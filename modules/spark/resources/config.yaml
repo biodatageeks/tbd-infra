@@ -13,3 +13,6 @@ podMonitor:
   podMetricsEndpoint:
     scheme: http
     interval: 5s
+
+webhook:
+  enable: true
