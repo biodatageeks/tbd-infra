@@ -39,13 +39,10 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   location   = var.zone
   cluster    = google_container_cluster.primary.name
 
-  autoscaling {
-    min_node_count = 1
-    max_node_count = var.max_node_count
-  }
+  node_count = var.max_node_count
 
   node_config {
-    preemptible  = true
+    preemptible  = var.pool_preemptible
     machine_type = var.machine_type
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.

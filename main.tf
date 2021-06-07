@@ -10,6 +10,7 @@ module "gke" {
   zone = var.zone
   machine_type = var.machine_type
   max_node_count = var.max_node_count
+  pool_preemptible = var.pool_preemptible
   depends_on = [module.application]
 }
 

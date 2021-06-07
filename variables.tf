@@ -23,3 +23,9 @@ variable "max_node_count" {
   type = string
   description = "Maximum number of GKE nodes"
 }
+
+variable "pool_preemptible" {
+  type = bool
+  default = true
+  description = "Pool preemptible t/f"
+}
