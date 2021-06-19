@@ -73,10 +73,10 @@ bin/create-project.sh
 #setup GKE and install necessary components
 terraform init  
 #observe your infra DAG
-terraform plan -var-file=env/dev.tfvars -var 'max_node_count=10'
+terraform plan -var-file=env/dev.tfvars -var 'max_node_count=10' -out plan
 #deploy it if you fully understand the execution plan displayed!
 # Warning!: Time needed for cluster setup: approx. 10 mins
-terraform apply -var-file=env/dev.tfvars -var 'max_node_count=10'
+terraform apply "plan"
 ```
 
 ## Connect to GKE cluster
@@ -129,7 +129,7 @@ Use `admin` as username and get admin password
 ```
 #get admin user password
 kubectl get secret prometheus-community-grafana -o jsonpath='{.data}' -n default \
-| jq -r '."admin-password"' | base64 --decode
+| jq -r '."admin-password"' | base64 --decode && echo ' '
 ```
 
 ## Import grafana dashboards
@@ -222,7 +222,7 @@ terraform destroy -var-file=env/dev.tfvars -target=module.prometheus.helm_releas
 ## Troubleshooting
 In case of errors related to missing kubernetes provider in terraform - please try to reauthenticate:
 ```
-gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_location} --project ${TF_VAR_project_name}
+gcloud container clusters get-credentials tbd-gke-cluster --zone ${TF_VAR_zone} --project ${TF_VAR_project_name}
 ```
 
 ## Monitoring K8s and Spark applications
