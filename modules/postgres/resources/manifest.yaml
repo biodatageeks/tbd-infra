@@ -1,0 +1,18 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: tbd-airflow-external-db
+  namespace: default
+spec:
+  teamId: "tbd"
+  volume:
+    size: 1Gi
+  numberOfInstances: 2
+  users:
+    airflow_user:
+      - superuser
+      - createdb
+  databases:
+    airflow_db: airflow_user
+  postgresql:
+    version: "13"
