@@ -17,3 +17,8 @@ variable "max_node_count" {
   type = string
   description = "Maximum number of GKE nodes"
 }
+
+variable "cluster_name" {
+  type = string
+  description = "Name of TBD cluster"
+}

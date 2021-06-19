@@ -2,11 +2,13 @@ resource "google_storage_bucket" "application-storage" {
   name = var.project_name
   location = var.location
   force_destroy = true
+  project = var.project_name
 }
 
 resource "google_service_account" "tbd-lab" {
   account_id   = "tbd-lab"
   display_name = "Service account for TBD project"
+  project = var.project_name
 }
 
 resource "google_storage_bucket_iam_binding" "binding" {

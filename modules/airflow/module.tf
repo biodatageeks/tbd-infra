@@ -1,12 +1,15 @@
 resource "google_service_account" "airflow-service-account" {
   account_id   = "airflow-cluster1"
   display_name = "Service account for Airflow"
+  project = var.project_name
+
 }
 
 resource "google_storage_bucket" "airflow-logs-storage" {
   name = var.logs_bucket
   location = var.location
   force_destroy = true
+  project = var.project_name
 }
 
 resource "google_storage_bucket_iam_binding" "binding" {

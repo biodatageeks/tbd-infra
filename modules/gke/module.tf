@@ -20,8 +20,9 @@ resource "google_project_service" "tbd-service-gke" {
 
 
 resource "google_container_cluster" "primary" {
-  name     = "tbd-gke-cluster"
+  name     = var.cluster_name
   location = var.zone
+  project = var.project_name
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -32,16 +33,18 @@ resource "google_container_cluster" "primary" {
 
 data "google_service_account" "tbd-lab" {
   account_id   = "tbd-lab"
+  project = var.project_name
 }
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
+  project = var.project_name
   name       = "tbd-lab-pool"
   location   = var.zone
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 2
 
   autoscaling {
-    min_node_count = 1
+    min_node_count = 2
     max_node_count = var.max_node_count
   }
 
