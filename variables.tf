@@ -15,7 +15,7 @@ variable "zone" {
 
 variable "machine_type" {
   type = string
-  default = "e2-standard-2"
+  default = "n1-standard-4"
   description = "GCP machine type"
 }
 

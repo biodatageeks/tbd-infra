@@ -27,7 +27,7 @@ resource "google_container_cluster" "primary" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
-  initial_node_count       = 1
+  initial_node_count       = 2
 }
 
 data "google_service_account" "tbd-lab" {
@@ -38,12 +38,12 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "tbd-lab-pool"
   location   = var.zone
   cluster    = google_container_cluster.primary.name
-  node_count = 1
+  node_count = 2
 
-  autoscaling {
-    min_node_count = 1
-    max_node_count = var.max_node_count
-  }
+//  autoscaling {
+//    min_node_count = 1
+//    max_node_count = var.max_node_count
+//  }
 
   node_config {
     preemptible  = true

@@ -44,7 +44,7 @@ resource "helm_release" "kube-airflow" {
   name = "airflow-stable"
   repository = "https://airflow-helm.github.io/charts"
   chart = "airflow"
-  version = "8.0.9"
+  version = "8.4.1"
   namespace = "default"
   wait = false
 

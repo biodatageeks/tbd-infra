@@ -46,7 +46,7 @@ module "spark" {
   source   = "./modules/spark"
   depends_on = [module.gke]
   location = var.location
-  jars_bucket = "tbd-2021l-123-jars-storage"
+  jars_bucket = "tbd-2021l-125-jars-storage"
 }
 
 module "airflow" {
@@ -54,7 +54,7 @@ module "airflow" {
   depends_on = [module.gke, module.postgres, module.spark]
   project_name = var.project_name
   location = var.location
-  git_secret_path = "<PATH_TO_PRIVATE_SSH_KEY_FILE>"
+  git_secret_path = "/root/.ssh/id_rsa"
 }
 
 module "prometheus" {
@@ -62,7 +62,7 @@ module "prometheus" {
   depends_on = [module.gke]
 }
 
-module "ingress" {
-  source   = "./modules/ingress"
-  depends_on = [module.gke]
-}
+//module "ingress" {
+//  source   = "./modules/ingress"
+//  depends_on = [module.gke]
+//}

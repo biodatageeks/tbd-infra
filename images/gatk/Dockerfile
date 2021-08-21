@@ -22,3 +22,4 @@ RUN mkdir -p /tmp/jars
 RUN cd /tmp/jars && wget https://repo1.maven.org/maven2/com/google/cloud/bigdataoss/gcs-connector/hadoop3-2.2.1/gcs-connector-hadoop3-2.2.1-shaded.jar && \
     wget https://repo1.maven.org/maven2/com/google/cloud/google-cloud-nio/0.123.2/google-cloud-nio-0.123.2-shaded.jar
 
+COPY ref /home/ref
